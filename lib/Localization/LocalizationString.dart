@@ -15,8 +15,7 @@ class LocalizationString {
   static String get Theme => Localization().listString['Theme']??'Theme';
   static String get Error_Theme => Localization().listString['Error_Theme']??'Error_Theme';
   static String get Color => Localization().listString['Color']??'Color';
-  static String get Profile_Title => Localization().listString['Profile_Title']??'Profile_Title';
-  static String get Profile_Name => Localization().listString['Profile_Name']??'Profile_Name';
+  static String get Profile_Title => Localization().listString['Profile_Name']??'Profile_Name';
   static String get Error_Profile_Name => Localization().listString['Error_Profile_Name']??'Error_Profile_Name';
   static String get Add_Profile => Localization().listString['Add_Profile']??'Add_Profile';
   static String get Edit_Profile => Localization().listString['Edit_Profile']??'Edit_Profile';
@@ -25,10 +24,11 @@ class LocalizationString {
   static String get Settings => Localization().listString['Settings']??'Settings';
   static String get Total => Localization().listString['Total']??'Total';
   static String get Currency_Unit => Localization().listString['Currency_Unit']??'Currency_Unit';
+  static String get List_Item => Localization().listString['List_Item']??'List_Item';
   static String get Item => Localization().listString['Item']??'Item';
-  static String get SubItem => Localization().listString['SubItem']??'Sub Item';
+  static String get Sub_Item => Localization().listString['Sub_Item']??'Sub_Item';
   static String get Add_Order => Localization().listString['Add_Order']??'Add_Order';
-  static String get Sub_Item_List => Localization().listString['Sub_Item_List']??'Sub_Item_List';
+  static String get List_Sub_Item => Localization().listString['List_Sub_Item']??'List_Sub_Item';
   static String get Add_Sub_Item => Localization().listString['Add_Sub_Item']??'Add_Sub_Item';
   static String get Edit_Sub_Item => Localization().listString['Edit_Sub_Item']??'Edit_Sub_Item';
   static String get Confirm => Localization().listString['Confirm']??'Confirm';
@@ -61,4 +61,11 @@ class LocalizationString {
   static String get Sort_By_Price_Descending => Localization().listString['Sort_By_Price_Descending']??'Sort_By_Price_Descending';
   static String get Sort_By_Title_Ascending => Localization().listString['Sort_By_Title_Ascending']??'Sort_By_Title_Ascending';
   static String get Sort_By_Title_Descending => Localization().listString['Sort_By_Title_Descending']??'Sort_By_Title_Descending';
+  static String get Date_Time => Localization().listString['Date_Time']??'Date_Time';
+  static String get Import => Localization().listString['Import']??'Import';
+  static String get Export_Raw => Localization().listString['Export_Raw']??'Export_Raw';
+  static String get Export_Simplified => Localization().listString['Export_Simplified']??'Export_Simplified';
+  static String get Export_Details => Localization().listString['Export_Details']??'Export_Details';
+  static String get Copy_To_Clipboard_Successfully => Localization().listString['Copy_To_Clipboard_Successfully']??'Copy_To_Clipboard_Successfully';
+  static String get Copy_To_Clipboard_Error => Localization().listString['Copy_To_Clipboard_Error']??'Copy_To_Clipboard_Error';
 }

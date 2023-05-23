@@ -100,8 +100,6 @@ class SubItemFieldSimpleEdit extends Row {
                 ],
                 style: style,
                 onChanged: (value) => model.price = int.tryParse(value) ?? 0,
-                // onFieldSubmitted: (value) => callback?.call(),
-                // onSaved: (value) => print('onSaved $value'),
                 onEditingComplete: () => callback?.call(),
                 textInputAction: TextInputAction.done,
                 onTapOutside: (event) =>

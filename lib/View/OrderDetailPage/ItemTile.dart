@@ -20,7 +20,7 @@ class ItemTile extends TileButton {
             title: TitleText(Utils.formatDateTime(
                 AppData().currentOrder?.listItem[index].dateTime)),
             subtitle: SubTitleText(
-                AppData().currentOrder?.listItem[index].data.title ??
+                AppData().currentOrder?.listItem[index].title ??
                     LocalizationString.Error),
             trailing: BasicText(
                 '${AppData().currentOrder?.listItem[index].totalPrice.toString() ?? LocalizationString.Error}${LocalizationString.Currency_Unit}'),

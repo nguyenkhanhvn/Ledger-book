@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'ItemModel.dart';
 
@@ -27,6 +29,32 @@ class OrderModel {
       model._listItem.add(ItemModel.clone(item));
     }
     return model;
+  }
+
+  factory OrderModel.fromJson(Map<String, dynamic> jsonData) {
+    OrderModel model = OrderModel(title: jsonData['title']);
+    for(var item in jsonData['listItem']) {
+      model._listItem.add(ItemModel.fromJson(item));
+    }
+    model.reloadDateTime();
+    return model;
+  }
+  
+  factory OrderModel.fromJsonString(String jsonString) {
+    Map<String, dynamic> jsonData = json.decode(jsonString);
+    return OrderModel.fromJson(jsonData);
+  }
+
+  Map<String, dynamic> toJson() {
+    List<Map<String, dynamic>> jsonListItem = [];
+    for (var item in _listItem) {
+      jsonListItem.add(item.toJson());
+    }
+    return {'title': title, 'listItem': jsonListItem};
+  }
+  
+  String toJsonString() {
+    return json.encode(toJson());
   }
 
   DateTime? get startDate => _startDate;

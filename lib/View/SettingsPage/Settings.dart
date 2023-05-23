@@ -77,7 +77,7 @@ class _Settings extends State<Settings> {
                                 content: Row(
                                   children: [
                                     BasicText(
-                                        '${LocalizationString.Profile_Name}: '),
+                                        '${LocalizationString.Profile_Title}: '),
                                     Expanded(
                                       child: TextField(
                                         controller: textController,

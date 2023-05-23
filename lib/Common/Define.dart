@@ -8,14 +8,18 @@ enum PageAction {
   save,
 }
 
-enum SortType {
+enum MoreOption {
   none,
-  byDateAscending,
-  byDateDescending,
-  byPriceAscending,
-  byPriceDescending,
-  byNameAscending,
-  byNameDescending,
+  sortByDateAscending,
+  sortByDateDescending,
+  sortByPriceAscending,
+  sortByPriceDescending,
+  sortByNameAscending,
+  sortByNameDescending,
+  import,
+  exportRaw,
+  exportSimplified,
+  exportDetail,
 }
 
 class AppDefine {
@@ -33,6 +37,12 @@ class AppDefine {
   static String get CurrentColorKey => 'currentColor';
 
   static MaterialColor get DefaultColor => Colors.brown;
+
+  //other
+  static int get SeparatorLineLength => 16;
+  static String get SeparatorLineCharacter => '-';
+  static int get TabLength => 4;
+  static String get TabCharacter => ' ';
 }
 
 class LocalizationKeyDefine {

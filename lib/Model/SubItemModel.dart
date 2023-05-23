@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:hive/hive.dart';
 
@@ -25,6 +26,31 @@ class SubItemModel {
 
   void deepCopy(SubItemModel origin) {
     _deepCopy(origin, HashMap<SubItemModel, SubItemModel>());
+  }
+
+  factory SubItemModel.fromJsonString(String jsonString) {
+    Map<String, dynamic> jsonData = json.decode(jsonString);
+    return SubItemModel.fromJson(jsonData);
+  }
+
+  factory SubItemModel.fromJson(Map<String, dynamic> jsonData) {
+    SubItemModel model = SubItemModel(title: jsonData['title'], price: jsonData['price']);
+    for(var subItem in jsonData['listSubItem']) {
+      model._listSubItem.add(SubItemModel.clone(subItem));
+    }
+    return model;
+  }
+
+  Map<String, dynamic> toJson() {
+    List<Map<String, dynamic>> jsonListSubItem = [];
+    for (var subItem in _listSubItem) {
+      jsonListSubItem.add(subItem.toJson());
+    }
+    return {'title': title, 'price': price, 'listSubItem': jsonListSubItem};
+  }
+
+  String toJsonString() {
+    return json.encode(toJson());
   }
 
   List<SubItemModel> get listSubItem => List.of(_listSubItem);

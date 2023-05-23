@@ -26,7 +26,7 @@ class _SubItemDetailState extends State<SubItemDetail> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Localization().themeColor.shade800,
-        title: Center(child: AppBarTitleText(LocalizationString.SubItem)),
+        title: Center(child: AppBarTitleText(LocalizationString.Sub_Item)),
         centerTitle: true,
         leading: BackButton(
           onPressed: () => showDialog(
@@ -92,7 +92,7 @@ class _SubItemDetailState extends State<SubItemDetail> {
                   children: [
                     Expanded(
                       child: Center(
-                          child: TitleText(LocalizationString.Sub_Item_List)),
+                          child: TitleText(LocalizationString.List_Sub_Item)),
                     ),
                     BaseIconButton(
                       icon: BasicIcon(Icons.add),

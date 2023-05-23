@@ -129,7 +129,7 @@ class _ItemDetailState extends State<ItemDetail> {
                   children: [
                     Expanded(
                       child: Center(
-                          child: TitleText(LocalizationString.Sub_Item_List)),
+                          child: TitleText(LocalizationString.List_Sub_Item)),
                     ),
                     BaseIconButton(
                       icon: BasicIcon(Icons.add),
@@ -144,7 +144,7 @@ class _ItemDetailState extends State<ItemDetail> {
                           ),
                           actionCallback: {
                             PageAction.save: () => setState(
-                                () => widget.model.data.addSubItem(subItem)),
+                                () => widget.model.addSubItem(subItem)),
                           },
                         );
                       },
@@ -155,16 +155,16 @@ class _ItemDetailState extends State<ItemDetail> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
-                itemCount: widget.model.data.listSubItem.length + 1,
+                itemCount: widget.model.listSubItem.length + 1,
                 itemBuilder: (BuildContext context, int index) {
-                  if (index < widget.model.data.listSubItem.length) {
+                  if (index < widget.model.listSubItem.length) {
                     return SubItemTile(
                       context,
-                      model: widget.model.data.listSubItem[index],
+                      model: widget.model.listSubItem[index],
                       editModelCallback: (newSubItem) => setState(
-                          () => widget.model.data.editSubItem(index, newSubItem)),
+                          () => widget.model.editSubItem(index, newSubItem)),
                       deleteModelCallback: () =>
-                          setState(() => widget.model.data.removeSubItem(index)),
+                          setState(() => widget.model.removeSubItem(index)),
                     );
                   } else {
                     SubItemModel subItem = SubItemModel();
@@ -173,7 +173,7 @@ class _ItemDetailState extends State<ItemDetail> {
                       model: subItem,
                       callback: () {
                         setState(() {
-                          widget.model.data.addSubItem(subItem);
+                          widget.model.addSubItem(subItem);
                         });
                       },
                     );

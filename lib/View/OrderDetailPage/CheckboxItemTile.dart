@@ -21,7 +21,7 @@ class CheckboxItemTile extends Container {
               controlAffinity: ListTileControlAffinity.leading,
               value: model.checked,
               selected: model.checked,
-              title: TitleText(model.model.data.title),
+              title: TitleText(model.model.title),
               subtitle: SubTitleText(
                 Utils.formatShortDateTime(model.model.dateTime),
               ),

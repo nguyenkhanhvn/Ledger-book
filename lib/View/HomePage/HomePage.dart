@@ -27,7 +27,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool editMode = false;
   final List<CheckboxModel<OrderModel>> listModel = [];
-  final textController = TextEditingController();
 
   void _initListModel({List<int> checkedList = const []}) {
     listModel.clear();
@@ -103,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                   width: 36,
                   icon: const Icon(Icons.add),
                   onPressed: () {
+                    final textController = TextEditingController();
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ledger_book/Common/Define.dart';
+import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/Model/CheckboxModel.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/Model/OrderModel.dart';
-import 'package:ledger_book/Model/SubItemModel.dart';
 import 'package:ledger_book/View/Common/CommonListview.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
@@ -127,7 +127,7 @@ class _OrderDetailState extends State<OrderDetail> {
                   width: 36,
                   icon: const Icon(Icons.add),
                   onPressed: () {
-                    final newModel = ItemModel(data: SubItemModel());
+                    final newModel = ItemModel();
                     PageRouting.routeWithConditionalCallback(
                       context,
                       builder: (context) => ItemDetail(model: newModel),
@@ -169,37 +169,57 @@ class _OrderDetailState extends State<OrderDetail> {
                   itemBuilder: (BuildContext context) {
                     return {
                       [
-                        SortType.byDateAscending,
+                        MoreOption.sortByDateAscending,
                         LocalizationString.Sort_By_Date_Ascending,
                         BasicIcon(MyFlutterIcons.sort_alt_up)
                       ],
                       [
-                        SortType.byDateDescending,
+                        MoreOption.sortByDateDescending,
                         LocalizationString.Sort_By_Date_Descending,
                         BasicIcon(MyFlutterIcons.sort_alt_down)
                       ],
                       [
-                        SortType.byPriceAscending,
+                        MoreOption.sortByPriceAscending,
                         LocalizationString.Sort_By_Price_Ascending,
                         BasicIcon(MyFlutterIcons.sort_number_up)
                       ],
                       [
-                        SortType.byPriceDescending,
+                        MoreOption.sortByPriceDescending,
                         LocalizationString.Sort_By_Price_Descending,
                         BasicIcon(MyFlutterIcons.sort_number_down)
                       ],
                       [
-                        SortType.byNameAscending,
+                        MoreOption.sortByNameAscending,
                         LocalizationString.Sort_By_Title_Ascending,
                         BasicIcon(MyFlutterIcons.sort_name_up)
                       ],
                       [
-                        SortType.byNameDescending,
+                        MoreOption.sortByNameDescending,
                         LocalizationString.Sort_By_Title_Descending,
                         BasicIcon(MyFlutterIcons.sort_name_down)
                       ],
+                      [
+                        MoreOption.import,
+                        LocalizationString.Import,
+                        BasicIcon(Icons.input_outlined)
+                      ],
+                      [
+                        MoreOption.exportRaw,
+                        LocalizationString.Export_Raw,
+                        BasicIcon(Icons.input_outlined)
+                      ],
+                      [
+                        MoreOption.exportSimplified,
+                        LocalizationString.Export_Simplified,
+                        BasicIcon(Icons.outbond)
+                      ],
+                      [
+                        MoreOption.exportDetail,
+                        LocalizationString.Export_Details,
+                        BasicIcon(Icons.outbond)
+                      ],
                     }.map((List<dynamic> choice) {
-                      return PopupMenuItem<SortType>(
+                      return PopupMenuItem<MoreOption>(
                         value: choice[0],
                         child: Row(
                           children: [
@@ -210,12 +230,11 @@ class _OrderDetailState extends State<OrderDetail> {
                       );
                     }).toList();
                   },
-                  onSelected: (value) {
-                    print(value);
+                  onSelected: (value) async {
                     switch (value) {
-                      case SortType.none:
+                      case MoreOption.none:
                         break;
-                      case SortType.byDateAscending:
+                      case MoreOption.sortByDateAscending:
                         _sortOrder((a, b) {
                           if (a.dateTime.isBefore(b.dateTime)) {
                             return -1;
@@ -225,7 +244,7 @@ class _OrderDetailState extends State<OrderDetail> {
                           return 1;
                         });
                         break;
-                      case SortType.byDateDescending:
+                      case MoreOption.sortByDateDescending:
                         _sortOrder((a, b) {
                           if (a.dateTime.isAfter(b.dateTime)) {
                             return -1;
@@ -235,7 +254,7 @@ class _OrderDetailState extends State<OrderDetail> {
                           return 1;
                         });
                         break;
-                      case SortType.byPriceAscending:
+                      case MoreOption.sortByPriceAscending:
                         _sortOrder((a, b) {
                           if (a.totalPrice < b.totalPrice) {
                             return -1;
@@ -245,7 +264,7 @@ class _OrderDetailState extends State<OrderDetail> {
                           return 1;
                         });
                         break;
-                      case SortType.byPriceDescending:
+                      case MoreOption.sortByPriceDescending:
                         _sortOrder((a, b) {
                           if (a.totalPrice > b.totalPrice) {
                             return -1;
@@ -255,29 +274,80 @@ class _OrderDetailState extends State<OrderDetail> {
                           return 1;
                         });
                         break;
-                      case SortType.byNameAscending:
-                        _sortOrder(
-                            (a, b) => a.data.title.compareTo(b.data.title));
+                      case MoreOption.sortByNameAscending:
+                        _sortOrder((a, b) => a.title.compareTo(b.title));
                         break;
-                      case SortType.byNameDescending:
-                        _sortOrder(
-                                (a, b) => b.data.title.compareTo(a.data.title));
+                      case MoreOption.sortByNameDescending:
+                        _sortOrder((a, b) => b.title.compareTo(a.title));
+                        break;
+                      case MoreOption.import:
+                        final textController = TextEditingController();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BasicDialog(
+                              title: TitleText(LocalizationString.Add_Order),
+                              scrollable: true,
+                              content: TextField(controller: textController),
+                              successWidget: BasicText(LocalizationString.Import),
+                              onSuccess: () async {
+                                Navigator.pop(context);
+                                print('import: ${textController.text}');
+                                var i = ItemModel.fromJsonString(textController.text);
+                                print(i.title);
+                                print(i.totalPrice);
+                                await Controller().addItem(
+                                  ItemModel.fromJsonString(textController.text),
+                                );
+                                textController.clear();
+                                _switchMode(false);
+                              },
+                              onCancel: () => Navigator.pop(context),
+                            );
+                          },
+                        );
+                        break;
+                      case MoreOption.exportRaw:
+                        Utils.copyToClipboard(
+                                (AppData().currentOrder ?? OrderModel())
+                                    .toJsonString())
+                            .then(
+                          (value) => Utils.showToast(
+                              context,
+                              LocalizationString
+                                  .Copy_To_Clipboard_Successfully),
+                          onError: (e) => Utils.showToast(context,
+                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                        );
+                        break;
+                      case MoreOption.exportSimplified:
+                        Utils.copyToClipboard(Utils.exportOrderString(
+                                AppData().currentOrder ?? OrderModel()))
+                            .then(
+                          (value) => Utils.showToast(
+                              context,
+                              LocalizationString
+                                  .Copy_To_Clipboard_Successfully),
+                          onError: (e) => Utils.showToast(context,
+                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                        );
+                        break;
+                      case MoreOption.exportDetail:
+                        Utils.copyToClipboard(Utils.exportOrderString(
+                                AppData().currentOrder ?? OrderModel(),
+                                detail: true))
+                            .then(
+                          (value) => Utils.showToast(
+                              context,
+                              LocalizationString
+                                  .Copy_To_Clipboard_Successfully),
+                          onError: (e) => Utils.showToast(context,
+                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                        );
+                        break;
+                      default:
                         break;
                     }
-                    //   OrderModel order = AppData().currentOrder ?? OrderModel();
-                    //   List<ItemModel> data =
-                    //       AppData().currentOrder?.listItem ?? [];
-                    //   data.sort((a, b) {
-                    //     if (a.dateTime.isBefore(b.dateTime)) {
-                    //       return -1;
-                    //     } else if (a.dateTime == b.dateTime) {
-                    //       return 0;
-                    //     }
-                    //     return 1;
-                    //   });
-                    //   order.listItem = data;
-                    //   Controller().editOrder(order);
-                    //   setState(() {});
                   },
                 )
               ],
