@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ledger_book/Common/Define.dart';
+import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
-import 'package:ledger_book/Model/CheckboxModel.dart';
+import 'package:ledger_book/View/Common/BasicPopupMenu.dart';
+import 'package:ledger_book/View/Common/MyFlutterIcons.dart';
+import 'package:ledger_book/View/Model/CheckboxModel.dart';
 import 'package:ledger_book/Model/OrderModel.dart';
 import 'package:ledger_book/View/Common/CommonListview.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
@@ -12,6 +15,7 @@ import 'package:ledger_book/View/Common/SimpleDialog.dart';
 import 'package:ledger_book/View/HomePage/CheckboxOrderTile.dart';
 import 'package:ledger_book/View/HomePage/Drawer.dart';
 import 'package:ledger_book/View/HomePage/OrderEdit.dart';
+import 'package:ledger_book/View/Model/PopupMenuModel.dart';
 
 import 'OrderTile.dart';
 
@@ -108,7 +112,6 @@ class _HomePageState extends State<HomePage> {
                       builder: (BuildContext context) {
                         return BasicDialog(
                           title: TitleText(LocalizationString.Add_Order),
-                          scrollable: true,
                           content: OrderEdit(textController: textController),
                           successWidget: BasicText(LocalizationString.Add),
                           onSuccess: () async {
@@ -130,28 +133,197 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.edit_note),
                   onPressed: () => _switchMode(true),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: BaseIconButton(
-                    width: 36,
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return BasicDialog(
-                          title: TitleText(
-                              '${LocalizationString.Confirm_Delete_Profile} ${AppData().currentProfile}'),
-                          successWidget: BasicText(LocalizationString.Confirm),
-                          onSuccess: () async {
-                            Navigator.pop(context);
-                            await Controller().removeCurrentProfile();
-                            _switchMode(false);
-                          },
-                          onCancel: () => Navigator.pop(context),
-                        );
+                BaseIconButton(
+                  width: 36,
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return BasicDialog(
+                        title: TitleText(
+                            '${LocalizationString.Confirm_Delete_Profile} ${AppData().currentProfile}'),
+                        successWidget: BasicText(LocalizationString.Confirm),
+                        onSuccess: () async {
+                          Navigator.pop(context);
+                          await Controller().removeCurrentProfile();
+                          _switchMode(false);
+                        },
+                        onCancel: () => Navigator.pop(context),
+                      );
+                    },
+                  ),
+                ),
+                BasicPopupMenu(
+                  icon: const Icon(Icons.more_vert),
+                  listMenu: [
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Date_Ascending,
+                      icon: MyFlutterIcons.sort_alt_up,
+                      handle: () async {
+                        await Controller().sortProfile((a, b) {
+                          if (a.startDate == null) {
+                            return -1;
+                          } else if (b.startDate == null) {
+                            return 1;
+                          } else if (a.startDate!.isBefore(b.startDate!)) {
+                            return -1;
+                          } else if (a.startDate! == b.startDate!) {
+                            return 0;
+                          } else {
+                            return 1;
+                          }
+                        });
+                        setState(() {});
                       },
                     ),
-                  ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Date_Descending,
+                      icon: MyFlutterIcons.sort_alt_down,
+                      handle: () async {
+                        await Controller().sortProfile((a, b) {
+                          if (a.startDate == null) {
+                            return 1;
+                          } else if (b.startDate == null) {
+                            return -1;
+                          } else if (a.startDate!.isAfter(b.startDate!)) {
+                            return -1;
+                          } else if (a.startDate! == b.startDate!) {
+                            return 0;
+                          } else {
+                            return 1;
+                          }
+                        });
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Price_Ascending,
+                      icon: MyFlutterIcons.sort_number_up,
+                      handle: () async {
+                        await Controller().sortProfile((a, b) {
+                          if (a.totalPrice < b.totalPrice) {
+                            return -1;
+                          } else if (a.totalPrice == b.totalPrice) {
+                            return 0;
+                          }
+                          return 1;
+                        });
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Price_Descending,
+                      icon: MyFlutterIcons.sort_number_down,
+                      handle: () async {
+                        await Controller().sortProfile((a, b) {
+                          if (a.totalPrice > b.totalPrice) {
+                            return -1;
+                          } else if (a.totalPrice == b.totalPrice) {
+                            return 0;
+                          }
+                          return 1;
+                        });
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Title_Ascending,
+                      icon: MyFlutterIcons.sort_name_up,
+                      handle: () async {
+                        await Controller()
+                            .sortProfile((a, b) => a.title.compareTo(b.title));
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Title_Descending,
+                      icon: MyFlutterIcons.sort_name_down,
+                      handle: () async {
+                        await Controller()
+                            .sortProfile((a, b) => b.title.compareTo(a.title));
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                        title: LocalizationString.Import,
+                        icon: MyFlutterIcons.file_import,
+                        handle: () {
+                          final textController = TextEditingController();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return BasicDialog(
+                                title:
+                                    TitleText(LocalizationString.Import_Order),
+                                content: TextFormField(
+                                  decoration: const InputDecoration(
+                                      border: OutlineInputBorder()),
+                                  controller: textController,
+                                  maxLines: 10,
+                                ),
+                                successWidget:
+                                    BasicText(LocalizationString.Import),
+                                onSuccess: () async {
+                                  Navigator.pop(context);
+                                  Controller()
+                                      .importListOrderToCurrentProfile(
+                                          textController.text)
+                                      .then(
+                                        (value) => Utils.showToast(
+                                            context,
+                                            LocalizationString
+                                                .Import_Successfully),
+                                        onError: (e) => Utils.showToast(context,
+                                            '${LocalizationString.Import_Error}: $e'),
+                                      );
+                                  textController.clear();
+                                  _switchMode(false);
+                                },
+                                onCancel: () => Navigator.pop(context),
+                              );
+                            },
+                          );
+                        }),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Raw,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              Utils.exportProfile(AppData().currentProfile, AppData().listOrder))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Simplified,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              Utils.exportProfileString(
+                                  AppData().currentProfile, AppData().listOrder))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Details,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              Utils.exportProfileString(
+                                  AppData().currentProfile, AppData().listOrder,
+                                  detail: true))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
       ),
@@ -185,7 +357,8 @@ class _HomePageState extends State<HomePage> {
                           PageAction.delete: () async =>
                               await Controller().deleteCurrentOrder(),
                         },
-                        onLongPress: () => _switchMode(true, checkedList: [index]),
+                        onLongPress: () =>
+                            _switchMode(true, checkedList: [index]),
                       );
                     },
                   ),

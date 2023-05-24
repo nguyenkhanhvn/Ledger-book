@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +37,14 @@ class Utils {
     ));
   }
 
+  static String exportProfile(String profile, List<OrderModel> listOrder) {
+    List<Map<String, dynamic>> jsonListOrder = [];
+    for(var order in listOrder) {
+      jsonListOrder.add(order.toJson());
+    }
+    return json.encode({'profile': profile, 'listOrder': jsonListOrder});
+  }
+
   static String exportProfileString(String profile, List<OrderModel> listOrder,
       {String initParser = '', int level = 0, bool detail = false}) {
     initParser =
@@ -47,7 +56,7 @@ class Utils {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${AppDefine.SeparatorLineCharacter * (AppDefine.SeparatorLineLength + AppDefine.TabLength * 6)}\n';
     }
-    return '';
+    return initParser;
   }
 
   static String exportOrderString(OrderModel order,

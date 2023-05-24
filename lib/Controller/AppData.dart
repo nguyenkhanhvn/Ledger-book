@@ -17,7 +17,9 @@ class AppData {
   int? _itemIndex;
 
   String get currentProfile {
-    if(_currentProfile == AppDefine.DefaultProfileName) return Localization().defaultProfileName;
+    if (_currentProfile == AppDefine.DefaultProfileName) {
+      return Localization().defaultProfileName;
+    }
     return _currentProfile;
   }
 
@@ -73,6 +75,10 @@ class AppData {
     return _listProfile.remove(profile);
   }
 
+  void _sortProfile(int Function(OrderModel, OrderModel) compare) {
+    _listOrder.sort(compare);
+  }
+
   bool _checkOrderIndexValid(int? index) {
     return index != null && index >= 0 && index < _listOrder.length;
   }
@@ -106,6 +112,22 @@ class AppData {
     return true;
   }
 
+  bool _sortCurrentOrder(int Function(ItemModel, ItemModel) compare) {
+    if (!_checkOrderIndexValid(_orderIndex)) return false;
+    List<ItemModel> newItemList = _listOrder[_orderIndex!].listItem;
+    newItemList.sort(compare);
+    _listOrder[_orderIndex!].listItem = newItemList;
+    return true;
+  }
+
+  bool _sortOrder(int index, int Function(ItemModel, ItemModel) compare) {
+    if (!_checkOrderIndexValid(index)) return false;
+    List<ItemModel> newItemList = _listOrder[index].listItem;
+    newItemList.sort(compare);
+    _listOrder[index].listItem = newItemList;
+    return true;
+  }
+
   bool _addItem(ItemModel item) {
     if (!_checkOrderIndexValid(_orderIndex)) return false;
     _listOrder[_orderIndex!].addItem(ItemModel.clone(item));
@@ -128,8 +150,9 @@ class AppData {
   bool _deleteItem(int index) {
     if (!_checkItemIndexValid(index)) return false;
     _listOrder[_orderIndex!].removeItem(index);
-    if (_itemIndex != null && index <= _itemIndex!)
+    if (_itemIndex != null && index <= _itemIndex!) {
       _itemIndex = _itemIndex! - 1;
+    }
     return true;
   }
 }

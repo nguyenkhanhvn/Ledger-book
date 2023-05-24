@@ -3,7 +3,8 @@ import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
-import 'package:ledger_book/Model/CheckboxModel.dart';
+import 'package:ledger_book/View/Common/BasicPopupMenu.dart';
+import 'package:ledger_book/View/Model/CheckboxModel.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/Model/OrderModel.dart';
 import 'package:ledger_book/View/Common/CommonListview.dart';
@@ -13,6 +14,7 @@ import 'package:ledger_book/View/Common/Footer.dart';
 import 'package:ledger_book/View/Common/SimpleDialog.dart';
 import 'package:ledger_book/View/Common/MyFlutterIcons.dart';
 import 'package:ledger_book/View/ItemDetailPage/ItemDetail.dart';
+import 'package:ledger_book/View/Model/PopupMenuModel.dart';
 import 'package:ledger_book/View/OrderDetailPage/CheckboxItemTile.dart';
 import 'package:ledger_book/View/OrderDetailPage/ItemTile.dart';
 import 'package:ledger_book/View/PageRouting.dart';
@@ -43,15 +45,6 @@ class _OrderDetailState extends State<OrderDetail> {
       _initListModel(checkedList: checkedList);
       editMode = mode;
     });
-  }
-
-  void _sortOrder(int Function(ItemModel, ItemModel) compare) {
-    OrderModel order = AppData().currentOrder ?? OrderModel();
-    List<ItemModel> newItemList = AppData().currentOrder?.listItem ?? [];
-    newItemList.sort(compare);
-    order.listItem = newItemList;
-    Controller().editOrder(order);
-    setState(() {});
   }
 
   @override
@@ -164,78 +157,14 @@ class _OrderDetailState extends State<OrderDetail> {
                     },
                   ),
                 ),
-                PopupMenuButton(
+                BasicPopupMenu(
                   icon: const Icon(Icons.more_vert),
-                  itemBuilder: (BuildContext context) {
-                    return {
-                      [
-                        MoreOption.sortByDateAscending,
-                        LocalizationString.Sort_By_Date_Ascending,
-                        BasicIcon(MyFlutterIcons.sort_alt_up)
-                      ],
-                      [
-                        MoreOption.sortByDateDescending,
-                        LocalizationString.Sort_By_Date_Descending,
-                        BasicIcon(MyFlutterIcons.sort_alt_down)
-                      ],
-                      [
-                        MoreOption.sortByPriceAscending,
-                        LocalizationString.Sort_By_Price_Ascending,
-                        BasicIcon(MyFlutterIcons.sort_number_up)
-                      ],
-                      [
-                        MoreOption.sortByPriceDescending,
-                        LocalizationString.Sort_By_Price_Descending,
-                        BasicIcon(MyFlutterIcons.sort_number_down)
-                      ],
-                      [
-                        MoreOption.sortByNameAscending,
-                        LocalizationString.Sort_By_Title_Ascending,
-                        BasicIcon(MyFlutterIcons.sort_name_up)
-                      ],
-                      [
-                        MoreOption.sortByNameDescending,
-                        LocalizationString.Sort_By_Title_Descending,
-                        BasicIcon(MyFlutterIcons.sort_name_down)
-                      ],
-                      [
-                        MoreOption.import,
-                        LocalizationString.Import,
-                        BasicIcon(Icons.input_outlined)
-                      ],
-                      [
-                        MoreOption.exportRaw,
-                        LocalizationString.Export_Raw,
-                        BasicIcon(Icons.input_outlined)
-                      ],
-                      [
-                        MoreOption.exportSimplified,
-                        LocalizationString.Export_Simplified,
-                        BasicIcon(Icons.outbond)
-                      ],
-                      [
-                        MoreOption.exportDetail,
-                        LocalizationString.Export_Details,
-                        BasicIcon(Icons.outbond)
-                      ],
-                    }.map((List<dynamic> choice) {
-                      return PopupMenuItem<MoreOption>(
-                        value: choice[0],
-                        child: Row(
-                          children: [
-                            Expanded(child: BasicText(choice[1])),
-                            choice[2],
-                          ],
-                        ),
-                      );
-                    }).toList();
-                  },
-                  onSelected: (value) async {
-                    switch (value) {
-                      case MoreOption.none:
-                        break;
-                      case MoreOption.sortByDateAscending:
-                        _sortOrder((a, b) {
+                  listMenu: [
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Date_Ascending,
+                      icon: MyFlutterIcons.sort_alt_up,
+                      handle: () async {
+                        await Controller().sortCurrentOrder((a, b) {
                           if (a.dateTime.isBefore(b.dateTime)) {
                             return -1;
                           } else if (a.dateTime == b.dateTime) {
@@ -243,9 +172,14 @@ class _OrderDetailState extends State<OrderDetail> {
                           }
                           return 1;
                         });
-                        break;
-                      case MoreOption.sortByDateDescending:
-                        _sortOrder((a, b) {
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Date_Descending,
+                      icon: MyFlutterIcons.sort_alt_down,
+                      handle: () async {
+                        await Controller().sortCurrentOrder((a, b) {
                           if (a.dateTime.isAfter(b.dateTime)) {
                             return -1;
                           } else if (a.dateTime == b.dateTime) {
@@ -253,9 +187,14 @@ class _OrderDetailState extends State<OrderDetail> {
                           }
                           return 1;
                         });
-                        break;
-                      case MoreOption.sortByPriceAscending:
-                        _sortOrder((a, b) {
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Price_Ascending,
+                      icon: MyFlutterIcons.sort_number_up,
+                      handle: () async {
+                        await Controller().sortCurrentOrder((a, b) {
                           if (a.totalPrice < b.totalPrice) {
                             return -1;
                           } else if (a.totalPrice == b.totalPrice) {
@@ -263,9 +202,14 @@ class _OrderDetailState extends State<OrderDetail> {
                           }
                           return 1;
                         });
-                        break;
-                      case MoreOption.sortByPriceDescending:
-                        _sortOrder((a, b) {
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Price_Descending,
+                      icon: MyFlutterIcons.sort_number_down,
+                      handle: () async {
+                        await Controller().sortCurrentOrder((a, b) {
                           if (a.totalPrice > b.totalPrice) {
                             return -1;
                           } else if (a.totalPrice == b.totalPrice) {
@@ -273,83 +217,119 @@ class _OrderDetailState extends State<OrderDetail> {
                           }
                           return 1;
                         });
-                        break;
-                      case MoreOption.sortByNameAscending:
-                        _sortOrder((a, b) => a.title.compareTo(b.title));
-                        break;
-                      case MoreOption.sortByNameDescending:
-                        _sortOrder((a, b) => b.title.compareTo(a.title));
-                        break;
-                      case MoreOption.import:
-                        final textController = TextEditingController();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return BasicDialog(
-                              title: TitleText(LocalizationString.Add_Order),
-                              scrollable: true,
-                              content: TextField(controller: textController),
-                              successWidget: BasicText(LocalizationString.Import),
-                              onSuccess: () async {
-                                Navigator.pop(context);
-                                print('import: ${textController.text}');
-                                var i = ItemModel.fromJsonString(textController.text);
-                                print(i.title);
-                                print(i.totalPrice);
-                                await Controller().addItem(
-                                  ItemModel.fromJsonString(textController.text),
-                                );
-                                textController.clear();
-                                _switchMode(false);
-                              },
-                              onCancel: () => Navigator.pop(context),
-                            );
-                          },
-                        );
-                        break;
-                      case MoreOption.exportRaw:
-                        Utils.copyToClipboard(
-                                (AppData().currentOrder ?? OrderModel())
-                                    .toJsonString())
-                            .then(
-                          (value) => Utils.showToast(
-                              context,
-                              LocalizationString
-                                  .Copy_To_Clipboard_Successfully),
-                          onError: (e) => Utils.showToast(context,
-                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
-                        );
-                        break;
-                      case MoreOption.exportSimplified:
-                        Utils.copyToClipboard(Utils.exportOrderString(
-                                AppData().currentOrder ?? OrderModel()))
-                            .then(
-                          (value) => Utils.showToast(
-                              context,
-                              LocalizationString
-                                  .Copy_To_Clipboard_Successfully),
-                          onError: (e) => Utils.showToast(context,
-                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
-                        );
-                        break;
-                      case MoreOption.exportDetail:
-                        Utils.copyToClipboard(Utils.exportOrderString(
-                                AppData().currentOrder ?? OrderModel(),
-                                detail: true))
-                            .then(
-                          (value) => Utils.showToast(
-                              context,
-                              LocalizationString
-                                  .Copy_To_Clipboard_Successfully),
-                          onError: (e) => Utils.showToast(context,
-                              '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
-                        );
-                        break;
-                      default:
-                        break;
-                    }
-                  },
-                )
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Title_Ascending,
+                      icon: MyFlutterIcons.sort_name_up,
+                      handle: () async {
+                        await Controller().sortCurrentOrder(
+                            (a, b) => a.title.compareTo(b.title));
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Sort_By_Title_Descending,
+                      icon: MyFlutterIcons.sort_name_down,
+                      handle: () async {
+                        await Controller().sortCurrentOrder(
+                            (a, b) => b.title.compareTo(a.title));
+                        setState(() {});
+                      },
+                    ),
+                    PopupMenuModel(
+                        title: LocalizationString.Import,
+                        icon: MyFlutterIcons.file_import,
+                        handle: () {
+                          final textController = TextEditingController();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return BasicDialog(
+                                title: TitleText(LocalizationString.Import_Item),
+                                content: TextFormField(
+                                  decoration: const InputDecoration(
+                                      border: OutlineInputBorder()),
+                                  controller: textController,
+                                  maxLines: 10,
+                                ),
+                                successWidget:
+                                    BasicText(LocalizationString.Import),
+                                onSuccess: () async {
+                                  Navigator.pop(context);
+                                  Controller()
+                                      .importListItemToCurrentOrder(textController.text)
+                                      .then(
+                                    (success) {
+                                      textController.clear();
+                                      _switchMode(false);
+                                      if (success) {
+                                        setState(() {});
+                                        Utils.showToast(
+                                            context,
+                                            LocalizationString
+                                                .Import_Successfully);
+                                      } else {
+                                        Utils.showToast(context,
+                                            LocalizationString.Import_Error);
+                                      }
+                                    },
+                                    onError: (e) {
+                                      textController.clear();
+                                      _switchMode(false);
+                                      Utils.showToast(context,
+                                          '${LocalizationString.Import_Error}: $e');
+                                    },
+                                  );
+                                },
+                                onCancel: () => Navigator.pop(context),
+                              );
+                            },
+                          );
+                        }),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Raw,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              (AppData().currentOrder ?? OrderModel())
+                                  .toJsonString())
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Simplified,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              Utils.exportOrderString(
+                                  AppData().currentOrder ?? OrderModel()))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Details,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              Utils.exportOrderString(
+                                  AppData().currentOrder ?? OrderModel(),
+                                  detail: true))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                  ],
+                ),
               ],
       ),
       body: Column(

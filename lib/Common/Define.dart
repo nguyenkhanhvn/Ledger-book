@@ -23,6 +23,11 @@ enum MoreOption {
 }
 
 class AppDefine {
+  // App define
+  static DateTime minDateTime = DateTime.utc(-271821,04,20);
+  static DateTime maxDateTime = DateTime.utc(275760,09,13);
+
+  // String
   static String get AppConfigAsset => 'assets/config.json';
   static String get AppConfigPath => 'config';
   static String get AppLocalizationAsset => 'assets/localization.json';
@@ -36,9 +41,10 @@ class AppDefine {
   static String get CurrentLocaleKey => 'CurrentLocaleKey';
   static String get CurrentColorKey => 'currentColor';
 
+  // Color
   static MaterialColor get DefaultColor => Colors.brown;
 
-  //other
+  // Other
   static int get SeparatorLineLength => 16;
   static String get SeparatorLineCharacter => '-';
   static int get TabLength => 4;

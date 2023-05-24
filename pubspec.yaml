@@ -63,7 +63,10 @@ flutter:
   fonts:
     - family: SortIcons
       fonts:
-      - asset: fonts/SortIcons.ttf
+        - asset: assets/fonts/SortIcons.ttf
+    - family: ImportExportIcons
+      fonts:
+        - asset: assets/fonts/ImportExportIcons.ttf
 
   assets:
     - assets/

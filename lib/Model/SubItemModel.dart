@@ -36,7 +36,7 @@ class SubItemModel {
   factory SubItemModel.fromJson(Map<String, dynamic> jsonData) {
     SubItemModel model = SubItemModel(title: jsonData['title'], price: jsonData['price']);
     for(var subItem in jsonData['listSubItem']) {
-      model._listSubItem.add(SubItemModel.clone(subItem));
+      model._listSubItem.add(SubItemModel.fromJson(subItem));
     }
     return model;
   }

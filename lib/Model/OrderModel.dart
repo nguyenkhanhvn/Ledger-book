@@ -64,7 +64,10 @@ class OrderModel {
   List<ItemModel> get listItem => List.of(_listItem);
 
   set listItem(List<ItemModel> newListItem) {
-    _listItem = newListItem;
+    _listItem.clear();
+    for(var item in newListItem) {
+      _listItem.add(item);
+    }
   }
 
   int get totalPrice {

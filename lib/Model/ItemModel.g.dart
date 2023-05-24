@@ -17,7 +17,7 @@ class ItemModelAdapter extends TypeAdapter<ItemModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ItemModel(
-      data: fields[1] as SubItemModel,
+      data: fields[1] as SubItemModel?,
       dateTime: fields[2] as DateTime?,
     );
   }

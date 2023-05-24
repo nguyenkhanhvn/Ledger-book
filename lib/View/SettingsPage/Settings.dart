@@ -73,7 +73,6 @@ class _Settings extends State<Settings> {
                               return BasicDialog(
                                 title:
                                     TitleText(LocalizationString.Edit_Profile),
-                                scrollable: true,
                                 content: Row(
                                   children: [
                                     BasicText(

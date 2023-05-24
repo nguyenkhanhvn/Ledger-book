@@ -88,7 +88,6 @@ class _AppDrawer extends State<AppDrawer> {
                                 TextEditingController();
                             return BasicDialog(
                               title: TitleText(LocalizationString.Add_Profile),
-                              scrollable: true,
                               content: Row(
                                 children: [
                                   BasicText(

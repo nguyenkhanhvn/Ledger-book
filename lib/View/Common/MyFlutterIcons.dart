@@ -21,11 +21,15 @@ import 'package:flutter/widgets.dart';
 
 class MyFlutterIcons {
   MyFlutterIcons._();
+  static const _kSortFontFam = 'SortIcons';
+  static const _kImportExportFam = 'ImportExportIcons';
 
-  static const IconData sort_name_up = IconData(0xf15d, fontFamily: 'SortIcons', fontPackage: null);
-  static const IconData sort_name_down = IconData(0xf15e, fontFamily: 'SortIcons', fontPackage: null);
-  static const IconData sort_alt_up = IconData(0xf160, fontFamily: 'SortIcons', fontPackage: null);
-  static const IconData sort_alt_down = IconData(0xf161, fontFamily: 'SortIcons', fontPackage: null);
-  static const IconData sort_number_up = IconData(0xf162, fontFamily: 'SortIcons', fontPackage: null);
-  static const IconData sort_number_down = IconData(0xf163, fontFamily: 'SortIcons', fontPackage: null);
+  static const IconData sort_name_up = IconData(0xf15d, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData sort_name_down = IconData(0xf15e, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData sort_alt_up = IconData(0xf160, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData sort_alt_down = IconData(0xf161, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData sort_number_up = IconData(0xf162, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData sort_number_down = IconData(0xf163, fontFamily: _kSortFontFam, fontPackage: null);
+  static const IconData file_export = IconData(0xf56e, fontFamily: _kImportExportFam, fontPackage: null);
+  static const IconData file_import = IconData(0xf56f, fontFamily: _kImportExportFam, fontPackage: null);
 }

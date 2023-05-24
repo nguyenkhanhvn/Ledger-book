@@ -26,8 +26,10 @@ class LocalizationString {
   static String get Currency_Unit => Localization().listString['Currency_Unit']??'Currency_Unit';
   static String get List_Item => Localization().listString['List_Item']??'List_Item';
   static String get Item => Localization().listString['Item']??'Item';
+  static String get Import_Item => Localization().listString['Import_Item']??'Import_Item';
   static String get Sub_Item => Localization().listString['Sub_Item']??'Sub_Item';
   static String get Add_Order => Localization().listString['Add_Order']??'Add_Order';
+  static String get Import_Order => Localization().listString['Import_Order']??'Import_Order';
   static String get List_Sub_Item => Localization().listString['List_Sub_Item']??'List_Sub_Item';
   static String get Add_Sub_Item => Localization().listString['Add_Sub_Item']??'Add_Sub_Item';
   static String get Edit_Sub_Item => Localization().listString['Edit_Sub_Item']??'Edit_Sub_Item';
@@ -68,4 +70,6 @@ class LocalizationString {
   static String get Export_Details => Localization().listString['Export_Details']??'Export_Details';
   static String get Copy_To_Clipboard_Successfully => Localization().listString['Copy_To_Clipboard_Successfully']??'Copy_To_Clipboard_Successfully';
   static String get Copy_To_Clipboard_Error => Localization().listString['Copy_To_Clipboard_Error']??'Copy_To_Clipboard_Error';
+  static String get Import_Successfully => Localization().listString['Import_Successfully']??'Import_Successfully';
+  static String get Import_Error => Localization().listString['Import_Error']??'Import_Error';
 }

@@ -8,7 +8,7 @@ class BasicDialog extends AlertDialog {
     super.title,
     super.titleTextStyle,
     super.titlePadding,
-    super.scrollable,
+    super.scrollable = true,
     super.content,
     required Widget successWidget,
     VoidCallback? onSuccess,

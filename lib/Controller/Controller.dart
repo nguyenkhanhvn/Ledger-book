@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:global_configs/global_configs.dart';
 import 'package:hive/hive.dart';
@@ -143,18 +145,24 @@ class Controller {
     return result;
   }
 
+  Future<void> sortProfile(int Function(OrderModel, OrderModel) compare) async {
+    AppData()._sortProfile(compare);
+    await _save();
+  }
+
+  Future<void> importListOrderToCurrentProfile(String listOrder) async {
+    List<dynamic> data = json.decode(listOrder);
+    for(var jsonData in data) {
+      var order = OrderModel.fromJson((jsonData));
+      AppData()._listOrder.add(order);
+    }
+    await _save();
+  }
+
   bool setCurrentOrder(int index) {
     if (AppData()._checkOrderIndexValid(index)) {
       AppData()._orderIndex = index;
       AppData()._itemIndex = null;
-      return true;
-    }
-    return false;
-  }
-
-  bool setCurrentItem(int index) {
-    if (AppData()._checkItemIndexValid(index)) {
-      AppData()._itemIndex = index;
       return true;
     }
     return false;
@@ -183,6 +191,43 @@ class Controller {
     return result;
   }
 
+  Future<bool> sortCurrentOrder(int Function(ItemModel, ItemModel) compare) async {
+    bool result = AppData()._sortCurrentOrder(compare);
+    if (result) await _save();
+    return result;
+  }
+
+  Future<bool> sortOrder(int index, int Function(ItemModel, ItemModel) compare) async {
+    bool result = AppData()._sortOrder(index, compare);
+    if (result) await _save();
+    return result;
+  }
+
+  Future<bool> importListItemToCurrentOrder(String listItem) async {
+    var backup = AppData()._listOrder;
+    List<dynamic> data = json.decode(listItem);
+    bool success = false;
+    for(var jsonData in data) {
+      var item = ItemModel.fromJson((jsonData));
+      success = AppData()._addItem(item);
+      if(!success) break;
+    }
+    if(success) {
+      await _save();
+    } else {
+      AppData()._listOrder = backup;
+    }
+    return success;
+  }
+
+  bool setCurrentItem(int index) {
+    if (AppData()._checkItemIndexValid(index)) {
+      AppData()._itemIndex = index;
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> addItem(ItemModel item) async {
     bool result = AppData()._addItem(item);
     if (result) await _save();
@@ -207,6 +252,8 @@ class Controller {
     return result;
   }
 
+
+  // private method
   Future<bool> _save() async {
     if (_box == null) return false;
     await _box!.put(AppDefine.ListOrderKey, AppData()._listOrder);
