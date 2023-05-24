@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:ledger_book/Common/Utils.dart';
+import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'ItemModel.dart';
 
 part 'OrderModel.g.dart';
@@ -33,13 +35,13 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> jsonData) {
     OrderModel model = OrderModel(title: jsonData['title']);
-    for(var item in jsonData['listItem']) {
+    for (var item in jsonData['listItem']) {
       model._listItem.add(ItemModel.fromJson(item));
     }
     model.reloadDateTime();
     return model;
   }
-  
+
   factory OrderModel.fromJsonString(String jsonString) {
     Map<String, dynamic> jsonData = json.decode(jsonString);
     return OrderModel.fromJson(jsonData);
@@ -52,7 +54,7 @@ class OrderModel {
     }
     return {'title': title, 'listItem': jsonListItem};
   }
-  
+
   String toJsonString() {
     return json.encode(toJson());
   }
@@ -63,9 +65,15 @@ class OrderModel {
 
   List<ItemModel> get listItem => List.of(_listItem);
 
+  String get dateTimeShortString =>
+      '${Utils.formatShortDateTime(_startDate)} ${LocalizationString.To} ${Utils.formatShortDateTime(_endDate)}';
+
+  String get dateTimeString =>
+      '${Utils.formatDateTime(_startDate)} ${LocalizationString.To} ${Utils.formatDateTime(_endDate)}';
+
   set listItem(List<ItemModel> newListItem) {
     _listItem.clear();
-    for(var item in newListItem) {
+    for (var item in newListItem) {
       _listItem.add(item);
     }
   }

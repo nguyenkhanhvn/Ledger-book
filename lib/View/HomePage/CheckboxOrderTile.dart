@@ -23,11 +23,7 @@ class CheckboxOrderTile extends Container {
               value: model.checked,
               selected: model.checked,
               title: TitleText(model.model.title),
-              subtitle: SubTitleText(
-                '${Utils.formatShortDateTime(model.model.startDate)}'
-                ' ${LocalizationString.To} '
-                '${Utils.formatShortDateTime(model.model.endDate)}',
-              ),
+              subtitle: SubTitleText(model.model.dateTimeShortString),
               onChanged: (value) =>
                   setState(() => model.checked = value ?? false),
             ),

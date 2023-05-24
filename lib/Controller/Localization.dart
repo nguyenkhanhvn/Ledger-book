@@ -43,6 +43,8 @@ class Localization {
       _data[_currentTheme][_currentLocale]?[LocalizationKeyDefine.localeName] ??
       LocalizationString.Error_Locale;
 
+  String get currentLocaleSymbol => _currentLocale;
+
   List<String> get listSupportLocale {
     List<String> listData = [];
     for (String locale in _listSupportLocale) {

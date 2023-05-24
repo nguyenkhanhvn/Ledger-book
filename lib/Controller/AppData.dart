@@ -55,6 +55,10 @@ class AppData {
     return totalPrice;
   }
 
+  bool _checkProfileIndexValid(int? index) {
+    return index != null && index >= 0 && index < _listProfile.length;
+  }
+
   bool _addProfile(String profile) {
     if (profile.isEmpty && _listProfile.contains(profile)) return false;
     _listProfile.add(profile);
@@ -62,7 +66,7 @@ class AppData {
   }
 
   bool _editProfile(int index, String profile) {
-    if (index < 0 || index >= _listProfile.length) return false;
+    if (!_checkProfileIndexValid(index)) return false;
     _listProfile[index] = profile;
     return true;
   }

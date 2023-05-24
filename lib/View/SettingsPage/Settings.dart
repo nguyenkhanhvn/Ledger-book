@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
@@ -88,29 +89,84 @@ class _Settings extends State<Settings> {
                                 successWidget:
                                     BasicText(LocalizationString.Save),
                                 onSuccess: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return BasicDialog(
-                                        title: TitleText(
-                                            '${LocalizationString.Confirm_Add_Profile} ${textController.text}'),
-                                        successWidget: BasicText(
-                                            LocalizationString.Confirm),
-                                        onSuccess: () async {
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                          await Controller().editProfile(
-                                              index, textController.text);
-                                          setState(() {});
-                                        },
-                                        onCancel: () => Navigator.pop(context),
-                                      );
-                                    },
-                                  );
+                                  if (AppData().listProfile[index] !=
+                                      textController.text) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return BasicDialog(
+                                          title: TitleText(
+                                              '${LocalizationString.Confirm_Edit_Profile} ${AppData().listProfile[index]} ${LocalizationString.To} ${textController.text}'),
+                                          successWidget: BasicText(
+                                              LocalizationString.Confirm),
+                                          onSuccess: () async {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            await Controller().editProfile(
+                                                index, textController.text);
+                                            setState(() {});
+                                          },
+                                          onCancel: () =>
+                                              Navigator.pop(context),
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
                                 },
                                 onCancel: () => Navigator.pop(context),
                               );
                             },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  BasicTile(
+                    padding: const EdgeInsets.only(top: 40, bottom: 5),
+                    borderLine: BasicBorderSide(width: 2),
+                    child: TitleText(LocalizationString.Import_Export),
+                  ),
+                  TileButton(
+                    height: 40,
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: BasicText(LocalizationString.Import_Profile)),
+                    onPressed: () {
+                      final textController = TextEditingController();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return BasicDialog(
+                            title: TitleText(LocalizationString.Import_Profile),
+                            content: TextFormField(
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder()),
+                              controller: textController,
+                              maxLines: 10,
+                            ),
+                            successWidget: BasicText(LocalizationString.Import),
+                            onSuccess: () async {
+                              Navigator.pop(context);
+                              Controller()
+                                  .importProfile(textController.text)
+                                  .then(
+                                (value) {
+                                  textController.clear();
+                                  setState(() {});
+                                  Utils.showToast(context,
+                                      LocalizationString.Import_Successfully);
+                                },
+                                onError: (e) {
+                                  textController.clear();
+                                  setState(() {});
+                                  Utils.showToast(context,
+                                      '${LocalizationString.Import_Error}: $e');
+                                },
+                              );
+                            },
+                            onCancel: () => Navigator.pop(context),
                           );
                         },
                       );
@@ -223,7 +279,8 @@ class _Settings extends State<Settings> {
                                       .indexOf(Localization().themeColor),
                                   onChanged: (index) async {
                                     Navigator.pop(context);
-                                    await Controller().changeThemeColor(index ?? 0);
+                                    await Controller()
+                                        .changeThemeColor(index ?? 0);
                                     setState(() {});
                                     widget.setState?.call();
                                   },

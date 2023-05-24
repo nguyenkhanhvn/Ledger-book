@@ -40,7 +40,8 @@ class Controller {
     await changeTheme(Localization()._listTheme.indexOf(currentTheme));
 
     String? currentLocale = await _appDataBox.get(AppDefine.CurrentLocaleKey);
-    await changeLocale(Localization()._listSupportLocale.indexOf(currentLocale??''));
+    await changeLocale(
+        Localization()._listSupportLocale.indexOf(currentLocale ?? ''));
 
     // Open Profile
     String? profile = await _appDataBox.get(AppDefine.CurrentProfileKey);
@@ -64,8 +65,10 @@ class Controller {
       await _appDataBox.put(
           AppDefine.CurrentThemeKey, Localization()._currentTheme);
     }
-    if(!Localization()._listSupportLocale.contains(Localization()._currentLocale)) {
-      if(Localization()._listSupportLocale.isEmpty) {
+    if (!Localization()
+        ._listSupportLocale
+        .contains(Localization()._currentLocale)) {
+      if (Localization()._listSupportLocale.isEmpty) {
         Localization()._currentLocale = '';
       } else {
         Localization()._currentLocale = Localization()._listSupportLocale[0];
@@ -95,28 +98,53 @@ class Controller {
     AppData()._itemIndex = null;
     AppData()._orderIndex = null;
 
-
     int colorIndex = await _box!.get(AppDefine.CurrentColorKey) ??
         Colors.primaries.indexOf(AppDefine.DefaultColor);
     await changeThemeColor(colorIndex);
   }
 
-  Future<bool> addProfile(String profile) async {
+  Future<bool> importProfile(String profileString) async {
+    Map<String, dynamic> jsonData = json.decode(profileString);
+    bool success = await addProfile(jsonData['profile'], open: false);
+    if (success) {
+      List<OrderModel> newListOrder = [];
+      for (var orderData in jsonData['listOrder']) {
+        var order = OrderModel.fromJson((orderData));
+        newListOrder.add(order);
+      }
+      Box newProfile = await Hive.openBox(jsonData['profile']);
+      await newProfile.put(AppDefine.ListOrderKey, newListOrder);
+    }
+    return success;
+  }
+
+  Future<bool> addProfile(String profile, {bool open = false}) async {
     bool result = AppData()._addProfile(profile);
     if (result) {
       await _appDataBox.put(AppDefine.ListProfileKey, AppData()._listProfile);
+      if (open) await openProfile(profile);
     }
-    await openProfile(profile);
     return result;
   }
 
-  Future<bool> editProfile(int index, String profile) async {
-    bool result = AppData()._editProfile(index, profile);
-    if (result) {
-      await _appDataBox.put(AppDefine.ListProfileKey, AppData()._listProfile);
-    }
-    await openProfile(profile);
-    return result;
+  Future<bool> editProfile(int index, String newProfile) async {
+    if (!AppData()._checkProfileIndexValid(index) ||
+        AppData()._listProfile.contains(newProfile)) return false;
+
+    // copy old box to new box
+    Box boxOldProfile = await Hive.openBox(AppData()._listProfile[index]);
+    Box boxNewProfile = await Hive.openBox(newProfile);
+    await boxNewProfile.put(
+        AppDefine.ListOrderKey,
+        List<OrderModel>.of((boxOldProfile.get(AppDefine.ListOrderKey) ?? [])
+            .cast<OrderModel>()));
+
+    // delete old box
+    await boxOldProfile.deleteFromDisk();
+
+    AppData()._listProfile[index] = newProfile;
+    await _appDataBox.put(AppDefine.ListProfileKey, AppData()._listProfile);
+    return true;
   }
 
   Future<bool> removeCurrentProfile() async {
@@ -152,7 +180,7 @@ class Controller {
 
   Future<void> importListOrderToCurrentProfile(String listOrder) async {
     List<dynamic> data = json.decode(listOrder);
-    for(var jsonData in data) {
+    for (var jsonData in data) {
       var order = OrderModel.fromJson((jsonData));
       AppData()._listOrder.add(order);
     }
@@ -191,13 +219,15 @@ class Controller {
     return result;
   }
 
-  Future<bool> sortCurrentOrder(int Function(ItemModel, ItemModel) compare) async {
+  Future<bool> sortCurrentOrder(
+      int Function(ItemModel, ItemModel) compare) async {
     bool result = AppData()._sortCurrentOrder(compare);
     if (result) await _save();
     return result;
   }
 
-  Future<bool> sortOrder(int index, int Function(ItemModel, ItemModel) compare) async {
+  Future<bool> sortOrder(
+      int index, int Function(ItemModel, ItemModel) compare) async {
     bool result = AppData()._sortOrder(index, compare);
     if (result) await _save();
     return result;
@@ -207,12 +237,12 @@ class Controller {
     var backup = AppData()._listOrder;
     List<dynamic> data = json.decode(listItem);
     bool success = false;
-    for(var jsonData in data) {
+    for (var jsonData in data) {
       var item = ItemModel.fromJson((jsonData));
       success = AppData()._addItem(item);
-      if(!success) break;
+      if (!success) break;
     }
-    if(success) {
+    if (success) {
       await _save();
     } else {
       AppData()._listOrder = backup;
@@ -251,7 +281,6 @@ class Controller {
     if (result) await _save();
     return result;
   }
-
 
   // private method
   Future<bool> _save() async {

@@ -305,7 +305,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Export_Simplified,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(
-                              Utils.exportOrderString(
+                              Utils.exportOrderCustomString(
                                   AppData().currentOrder ?? OrderModel()))
                           .then(
                         (value) => Utils.showToast(context,
@@ -318,7 +318,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Export_Details,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(
-                              Utils.exportOrderString(
+                              Utils.exportOrderCustomString(
                                   AppData().currentOrder ?? OrderModel(),
                                   detail: true))
                           .then(

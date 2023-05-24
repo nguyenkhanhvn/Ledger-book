@@ -36,7 +36,10 @@ class ItemModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'data': data.toJson(), 'dateTime': Utils.basicFormatDateTime(dateTime)};
+    return {
+      'data': data.toJson(),
+      'dateTime': Utils.basicFormatDateTime(dateTime)
+    };
   }
 
   String toJsonString() {
@@ -50,6 +53,10 @@ class ItemModel {
   int get totalPrice => data.totalPrice;
 
   List<SubItemModel> get listSubItem => data.listSubItem;
+
+  String get dateTimeShortString => Utils.formatShortDateTime(dateTime);
+
+  String get dateTimeString => Utils.formatDateTime(dateTime);
 
   void addSubItem(SubItemModel subItem) {
     data.addSubItem(SubItemModel.clone(subItem));

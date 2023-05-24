@@ -45,6 +45,7 @@ class LocalizationString {
   static String get Delete_Sub_Item => Localization().listString['Delete_Sub_Item']??'Delete_Sub_Item';
   static String get Confirm_Delete => Localization().listString['Confirm_Delete']??'Confirm_Delete';
   static String get Confirm_Add_Profile => Localization().listString['Confirm_Add_Profile']??'Confirm_Add_Profile';
+  static String get Confirm_Edit_Profile => Localization().listString['Confirm_Edit_Profile']??'Confirm_Edit_Profile';
   static String get Confirm_Delete_Profile => Localization().listString['Confirm_Delete_Profile']??'Confirm_Delete_Profile';
   static String get Confirm_Delete_Order => Localization().listString['Confirm_Delete_Order']??'Confirm_Delete_Order';
   static String get Confirm_Delete_Orders => Localization().listString['Confirm_Delete_Orders']??'Confirm_Delete_Orders';
@@ -64,7 +65,10 @@ class LocalizationString {
   static String get Sort_By_Title_Ascending => Localization().listString['Sort_By_Title_Ascending']??'Sort_By_Title_Ascending';
   static String get Sort_By_Title_Descending => Localization().listString['Sort_By_Title_Descending']??'Sort_By_Title_Descending';
   static String get Date_Time => Localization().listString['Date_Time']??'Date_Time';
+  static String get Import_Export => Localization().listString['Import_Export']??'Import_Export';
   static String get Import => Localization().listString['Import']??'Import';
+  static String get Import_Profile => Localization().listString['Import_Profile']??'Import_Profile';
+  static String get Export_Profile => Localization().listString['Export_Profile']??'Export_Profile';
   static String get Export_Raw => Localization().listString['Export_Raw']??'Export_Raw';
   static String get Export_Simplified => Localization().listString['Export_Simplified']??'Export_Simplified';
   static String get Export_Details => Localization().listString['Export_Details']??'Export_Details';

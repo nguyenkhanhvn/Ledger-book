@@ -110,9 +110,7 @@ class _ItemDetailState extends State<ItemDetail> {
                         Icons.calendar_month,
                         size: 40,
                       ),
-                      BasicText(
-                        Utils.formatDateTime(widget.model.dateTime),
-                      ),
+                      BasicText(widget.model.dateTimeString),
                     ],
                   ),
                   onPressed: () => _selectDate(context),

@@ -18,11 +18,7 @@ class OrderTile extends TileButton {
     Map<PageAction, VoidCallback>? actionCallback,
   }) : super(
           child: ListTile(
-            title: TitleText(
-              '${Utils.formatShortDateTime(AppData().listOrder[index].startDate)}'
-              ' ${LocalizationString.To} '
-              '${Utils.formatShortDateTime(AppData().listOrder[index].endDate)}',
-            ),
+            title: TitleText(AppData().listOrder[index].dateTimeShortString),
             subtitle: SubTitleText(AppData().listOrder[index].title),
             trailing: BasicText(
                 '${AppData().listOrder[index].totalPrice.toString()}${LocalizationString.Currency_Unit}'),

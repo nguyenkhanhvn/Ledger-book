@@ -17,8 +17,7 @@ class ItemTile extends TileButton {
     VoidCallback? callback,
   }) : super(
           child: ListTile(
-            title: TitleText(Utils.formatDateTime(
-                AppData().currentOrder?.listItem[index].dateTime)),
+            title: TitleText(AppData().currentOrder?.listItem[index].dateTimeString??'-'),
             subtitle: SubTitleText(
                 AppData().currentOrder?.listItem[index].title ??
                     LocalizationString.Error),
