@@ -28,7 +28,9 @@ class Utils {
 
   static String formatShortDateTime(DateTime? time) {
     if (time == null) return '-';
-    return DateFormat('dd/MM/yyyy', 'vi').format(time);
+    return DateFormat('dd/MM/yyyy', Localization().currentLocaleSymbol != ''
+        ? Localization().currentLocaleSymbol
+        : 'en').format(time);
   }
 
   static Future<void> copyToClipboard(String str) async {
