@@ -2,10 +2,11 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:ledger_book/Common/Define.dart';
 
 part 'SubItemModel.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: HiveTypeId.SubItemModel)
 class SubItemModel {
   @HiveField(1)
   String title;

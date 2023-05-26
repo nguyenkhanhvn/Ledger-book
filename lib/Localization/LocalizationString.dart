@@ -15,6 +15,7 @@ class LocalizationString {
   static String get Theme => Localization().listString['Theme']??'Theme';
   static String get Error_Theme => Localization().listString['Error_Theme']??'Error_Theme';
   static String get Color => Localization().listString['Color']??'Color';
+  static String get Export_Type => Localization().listString['Export_Type']??'Export_Type';
   static String get Profile_Title => Localization().listString['Profile_Name']??'Profile_Name';
   static String get Error_Profile_Name => Localization().listString['Error_Profile_Name']??'Error_Profile_Name';
   static String get Add_Profile => Localization().listString['Add_Profile']??'Add_Profile';
@@ -28,8 +29,8 @@ class LocalizationString {
   static String get Item => Localization().listString['Item']??'Item';
   static String get Import_Item => Localization().listString['Import_Item']??'Import_Item';
   static String get Sub_Item => Localization().listString['Sub_Item']??'Sub_Item';
-  static String get Add_Order => Localization().listString['Add_Order']??'Add_Order';
-  static String get Import_Order => Localization().listString['Import_Order']??'Import_Order';
+  static String get Add_Record => Localization().listString['Add_Record']??'Add_Record';
+  static String get Import_Record => Localization().listString['Import_Record']??'Import_Record';
   static String get List_Sub_Item => Localization().listString['List_Sub_Item']??'List_Sub_Item';
   static String get Add_Sub_Item => Localization().listString['Add_Sub_Item']??'Add_Sub_Item';
   static String get Edit_Sub_Item => Localization().listString['Edit_Sub_Item']??'Edit_Sub_Item';
@@ -40,15 +41,15 @@ class LocalizationString {
   static String get Confirm_Save => Localization().listString['Confirm_Saved']??'Confirm_Saved';
   static String get Cancel => Localization().listString['Cancel']??'Cancel';
   static String get Delete => Localization().listString['Delete']??'Delete';
-  static String get Delete_Order => Localization().listString['Delete_Order']??'Delete_Order';
+  static String get Delete_Record => Localization().listString['Delete_Record']??'Delete_Record';
   static String get Delete_Item => Localization().listString['Delete_Item']??'Delete_Item';
   static String get Delete_Sub_Item => Localization().listString['Delete_Sub_Item']??'Delete_Sub_Item';
   static String get Confirm_Delete => Localization().listString['Confirm_Delete']??'Confirm_Delete';
   static String get Confirm_Add_Profile => Localization().listString['Confirm_Add_Profile']??'Confirm_Add_Profile';
   static String get Confirm_Edit_Profile => Localization().listString['Confirm_Edit_Profile']??'Confirm_Edit_Profile';
   static String get Confirm_Delete_Profile => Localization().listString['Confirm_Delete_Profile']??'Confirm_Delete_Profile';
-  static String get Confirm_Delete_Order => Localization().listString['Confirm_Delete_Order']??'Confirm_Delete_Order';
-  static String get Confirm_Delete_Orders => Localization().listString['Confirm_Delete_Orders']??'Confirm_Delete_Orders';
+  static String get Confirm_Delete_Record => Localization().listString['Confirm_Delete_Record']??'Confirm_Delete_Record';
+  static String get Confirm_Delete_Records => Localization().listString['Confirm_Delete_Records']??'Confirm_Delete_Records';
   static String get Confirm_Delete_Item => Localization().listString['Confirm_Delete_Item']??'Confirm_Delete_Item';
   static String get Confirm_Delete_Items => Localization().listString['Confirm_Delete_Items']??'Confirm_Delete_Items';
   static String get Confirm_Delete_Sub_Item => Localization().listString['Confirm_Delete_Sub_Item']??'Confirm_Delete_Sub_Item';
@@ -56,7 +57,7 @@ class LocalizationString {
   static String get Confirm_Back => Localization().listString['Confirm_Back']??'Confirm_Back';
   static String get Price => Localization().listString['Price']??'Price';
   static String get Title => Localization().listString['Title']??'Title';
-  static String get Order_Title => Localization().listString['Order_Title']??'Order_Title';
+  static String get Record_Title => Localization().listString['Record_Title']??'Record_Title';
   static String get To => Localization().listString['To']??'To';
   static String get Sort_By_Date_Ascending => Localization().listString['Sort_By_Date_Ascending']??'Sort_By_Date_Ascending';
   static String get Sort_By_Date_Descending => Localization().listString['Sort_By_Date_Descending']??'Sort_By_Date_Descending';
@@ -76,4 +77,7 @@ class LocalizationString {
   static String get Copy_To_Clipboard_Error => Localization().listString['Copy_To_Clipboard_Error']??'Copy_To_Clipboard_Error';
   static String get Import_Successfully => Localization().listString['Import_Successfully']??'Import_Successfully';
   static String get Import_Error => Localization().listString['Import_Error']??'Import_Error';
+  static String get Income => Localization().listString['Income']??'Income';
+  static String get Expense => Localization().listString['Expense']??'Expense';
+  static String get Summary => Localization().listString['Summary']??'Summary';
 }

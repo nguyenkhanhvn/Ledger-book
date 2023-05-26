@@ -3,11 +3,11 @@ import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
+import 'package:ledger_book/View/Common/BaseTabBar.dart';
 import 'package:ledger_book/View/Common/BasicPopupMenu.dart';
 import 'package:ledger_book/View/Model/CheckboxModel.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
-import 'package:ledger_book/Model/OrderModel.dart';
-import 'package:ledger_book/View/Common/CommonListview.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 import 'package:ledger_book/View/Common/Footer.dart';
@@ -15,35 +15,42 @@ import 'package:ledger_book/View/Common/SimpleDialog.dart';
 import 'package:ledger_book/View/Common/MyFlutterIcons.dart';
 import 'package:ledger_book/View/ItemDetailPage/ItemDetail.dart';
 import 'package:ledger_book/View/Model/PopupMenuModel.dart';
-import 'package:ledger_book/View/OrderDetailPage/CheckboxItemTile.dart';
-import 'package:ledger_book/View/OrderDetailPage/ItemTile.dart';
+import 'package:ledger_book/View/RecordDetailPage/RecordDetailContent.dart';
 import 'package:ledger_book/View/PageRouting.dart';
 
-class OrderDetail extends StatefulWidget {
-  const OrderDetail({super.key});
+class RecordDetail extends StatefulWidget {
+  const RecordDetail({super.key});
 
   @override
-  State<OrderDetail> createState() => _OrderDetailState();
+  State<RecordDetail> createState() => _RecordDetailState();
 }
 
-class _OrderDetailState extends State<OrderDetail> {
+class _RecordDetailState extends State<RecordDetail>
+    with SingleTickerProviderStateMixin {
   bool editMode = false;
-  final List<CheckboxModel<ItemModel>> listModel = [];
+  final Map<RecordCategory, List<CheckboxModel<ItemModel>>> checkboxModel = {};
+  late TabController _tabController;
 
-  void _initListModel({List<int> checkedList = const []}) {
-    listModel.clear();
-    if (AppData().currentOrder == null) return;
-    for (int i = 0; i < AppData().currentOrder!.listItem.length; i++) {
-      listModel.add(CheckboxModel<ItemModel>(
-          model: AppData().currentOrder!.listItem[i],
-          checked: checkedList.contains(i)));
+  void _initListModel() {
+    for (RecordCategory recordCategory in RecordCategory.values) {
+      checkboxModel[recordCategory] = [];
+      if (AppData().currentRecord == null) return;
+      for (int i = 0;
+          i < AppData().currentRecord!.getListItem(recordCategory).length;
+          i++) {
+        checkboxModel[recordCategory]!.add(CheckboxModel<ItemModel>(
+            model: AppData().currentRecord!.getListItem(recordCategory)[i],
+            checked: false));
+      }
     }
   }
 
-  void _switchMode(bool mode, {List<int> checkedList = const []}) {
+  void _switchMode(bool mode) {
     setState(() {
-      _initListModel(checkedList: checkedList);
       editMode = mode;
+      if (!mode) {
+        _initListModel();
+      }
     });
   }
 
@@ -52,6 +59,30 @@ class _OrderDetailState extends State<OrderDetail> {
     super.initState();
 
     _initListModel();
+
+    _tabController = TabController(vsync: this, length: 3);
+    _tabController.addListener(() async {
+      if (!_tabController.indexIsChanging) {
+        switch (_tabController.index) {
+          case 0:
+            Controller().setCurrentRecordCategory(RecordCategory.income);
+            break;
+          case 1:
+            Controller().setCurrentRecordCategory(RecordCategory.expense);
+            break;
+          case 2:
+            break;
+        }
+      }
+    });
+
+    _tabController.index = 0;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,21 +93,22 @@ class _OrderDetailState extends State<OrderDetail> {
           child: editMode
               ? TextFormField(
                   decoration: const InputDecoration(border: InputBorder.none),
-                  initialValue: AppData().currentOrder?.title ?? '',
+                  initialValue: AppData().currentRecord?.title ?? '',
                   style: AppBarTitleTextStyle(
-                    color: Theme.of(context).appBarTheme.foregroundColor,
+                    color: Theme.of(context).primaryTextTheme.bodyLarge?.color,
                   ),
-                  cursorColor: Theme.of(context).appBarTheme.foregroundColor,
+                  cursorColor:
+                      Theme.of(context).primaryTextTheme.bodyLarge?.color,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    OrderModel newModel =
-                        AppData().currentOrder ?? OrderModel();
+                    RecordModel newModel =
+                        AppData().currentRecord ?? RecordModel();
                     newModel.title = value;
-                    Controller().editOrder(newModel);
+                    Controller().editRecord(newModel);
                   },
                 )
               : AppBarTitleText(
-                  AppData().currentOrder?.title ?? LocalizationString.Error),
+                  AppData().currentRecord?.title ?? LocalizationString.Error),
         ),
         leading: BackButton(
           onPressed: editMode
@@ -96,11 +128,16 @@ class _OrderDetailState extends State<OrderDetail> {
                         successWidget: BasicText(LocalizationString.Confirm),
                         onSuccess: () async {
                           Navigator.pop(context);
-                          for (int i = 0; i < listModel.length; i++) {
-                            if (listModel[i].checked) {
-                              await Controller().deleteItem(i);
+                          checkboxModel.forEach((category, listCheckBox) {
+                            for (int index = listCheckBox.length - 1;
+                                index >= 0;
+                                index--) {
+                              if (listCheckBox[index].checked) {
+                                Controller().deleteItem(category, index);
+                              }
                             }
-                          }
+                          });
+
                           _switchMode(false);
                         },
                         onCancel: () => Navigator.pop(context),
@@ -121,12 +158,15 @@ class _OrderDetailState extends State<OrderDetail> {
                   icon: const Icon(Icons.add),
                   onPressed: () {
                     final newModel = ItemModel();
-                    PageRouting.routeWithConditionalCallback(
+                    PageRouting.routeWithConditionalValueChangeCallback(
                       context,
                       builder: (context) => ItemDetail(model: newModel),
                       actionCallback: {
-                        PageAction.save: () async {
-                          await Controller().addItem(newModel);
+                        PageAction.save: (returnValue) async {
+                          if (returnValue.isNotEmpty) {
+                            await Controller()
+                                .addItem(returnValue[0], newModel);
+                          }
                           _switchMode(false);
                         },
                       },
@@ -146,7 +186,7 @@ class _OrderDetailState extends State<OrderDetail> {
                     builder: (BuildContext context) {
                       return BasicDialog(
                         title:
-                            TitleText(LocalizationString.Confirm_Delete_Order),
+                            TitleText(LocalizationString.Confirm_Delete_Record),
                         successWidget: BasicText(LocalizationString.Confirm),
                         onSuccess: () async {
                           Navigator.pop(context);
@@ -164,7 +204,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Date_Ascending,
                       icon: MyFlutterIcons.sort_alt_up,
                       handle: () async {
-                        await Controller().sortCurrentOrder((a, b) {
+                        await Controller().sortCurrentRecord((a, b) {
                           if (a.dateTime.isBefore(b.dateTime)) {
                             return -1;
                           } else if (a.dateTime == b.dateTime) {
@@ -179,7 +219,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Date_Descending,
                       icon: MyFlutterIcons.sort_alt_down,
                       handle: () async {
-                        await Controller().sortCurrentOrder((a, b) {
+                        await Controller().sortCurrentRecord((a, b) {
                           if (a.dateTime.isAfter(b.dateTime)) {
                             return -1;
                           } else if (a.dateTime == b.dateTime) {
@@ -194,7 +234,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Price_Ascending,
                       icon: MyFlutterIcons.sort_number_up,
                       handle: () async {
-                        await Controller().sortCurrentOrder((a, b) {
+                        await Controller().sortCurrentRecord((a, b) {
                           if (a.totalPrice < b.totalPrice) {
                             return -1;
                           } else if (a.totalPrice == b.totalPrice) {
@@ -209,7 +249,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Price_Descending,
                       icon: MyFlutterIcons.sort_number_down,
                       handle: () async {
-                        await Controller().sortCurrentOrder((a, b) {
+                        await Controller().sortCurrentRecord((a, b) {
                           if (a.totalPrice > b.totalPrice) {
                             return -1;
                           } else if (a.totalPrice == b.totalPrice) {
@@ -224,7 +264,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Title_Ascending,
                       icon: MyFlutterIcons.sort_name_up,
                       handle: () async {
-                        await Controller().sortCurrentOrder(
+                        await Controller().sortCurrentRecord(
                             (a, b) => a.title.compareTo(b.title));
                         setState(() {});
                       },
@@ -233,7 +273,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Sort_By_Title_Descending,
                       icon: MyFlutterIcons.sort_name_down,
                       handle: () async {
-                        await Controller().sortCurrentOrder(
+                        await Controller().sortCurrentRecord(
                             (a, b) => b.title.compareTo(a.title));
                         setState(() {});
                       },
@@ -247,7 +287,8 @@ class _OrderDetailState extends State<OrderDetail> {
                             context: context,
                             builder: (BuildContext context) {
                               return BasicDialog(
-                                title: TitleText(LocalizationString.Import_Item),
+                                title:
+                                    TitleText(LocalizationString.Import_Item),
                                 content: TextFormField(
                                   decoration: const InputDecoration(
                                       border: OutlineInputBorder()),
@@ -259,7 +300,8 @@ class _OrderDetailState extends State<OrderDetail> {
                                 onSuccess: () async {
                                   Navigator.pop(context);
                                   Controller()
-                                      .importListItemToCurrentOrder(textController.text)
+                                      .importListItemToCurrentRecord(
+                                          textController.text)
                                       .then(
                                     (success) {
                                       textController.clear();
@@ -292,7 +334,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Export_Raw,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(
-                              (AppData().currentOrder ?? OrderModel())
+                              (AppData().currentRecord ?? RecordModel())
                                   .toJsonString())
                           .then(
                         (value) => Utils.showToast(context,
@@ -305,8 +347,8 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Export_Simplified,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(
-                              Utils.exportOrderCustomString(
-                                  AppData().currentOrder ?? OrderModel()))
+                              Utils.exportRecordString(
+                                  AppData().currentRecord ?? RecordModel()))
                           .then(
                         (value) => Utils.showToast(context,
                             LocalizationString.Copy_To_Clipboard_Successfully),
@@ -318,8 +360,8 @@ class _OrderDetailState extends State<OrderDetail> {
                       title: LocalizationString.Export_Details,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(
-                              Utils.exportOrderCustomString(
-                                  AppData().currentOrder ?? OrderModel(),
+                              Utils.exportRecordString(
+                                  AppData().currentRecord ?? RecordModel(),
                                   detail: true))
                           .then(
                         (value) => Utils.showToast(context,
@@ -334,32 +376,61 @@ class _OrderDetailState extends State<OrderDetail> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: editMode
-                ? BaseListView(
-                    itemCount: listModel.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return CheckboxItemTile(
-                          model: listModel[index], setState: setState);
-                    },
-                  )
-                : BaseListView(
-                    itemCount: AppData().currentOrder?.listItem.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ItemTile(
-                        context,
-                        index: index,
-                        callback: () => _switchMode(false),
-                        onLongPress: () =>
-                            _switchMode(true, checkedList: [index]),
-                      );
-                    },
-                  ),
+          BaseTabBar(
+            controller: _tabController,
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: BasicText(LocalizationString.Income),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: BasicText(LocalizationString.Expense),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: BasicText(LocalizationString.Summary),
+              ),
+            ],
           ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                RecordDetailContent(
+                  editMode: editMode,
+                  listCheckboxModel: checkboxModel[RecordCategory.income] ?? [],
+                  listModel: AppData()
+                          .currentRecord
+                          ?.getListItem(RecordCategory.income) ??
+                      [],
+                  setState: setState,
+                  switchMode: _switchMode,
+                ),
+                RecordDetailContent(
+                  editMode: editMode,
+                  listCheckboxModel:
+                      checkboxModel[RecordCategory.expense] ?? [],
+                  listModel: AppData()
+                          .currentRecord
+                          ?.getListItem(RecordCategory.expense) ??
+                      [],
+                  setState: setState,
+                  switchMode: _switchMode,
+                ),
+                Center(child: Text(3.toString()))
+              ],
+            ),
+          )
         ],
       ),
       bottomNavigationBar: PriceFooter(
-        value: AppData().currentOrder?.totalPrice ?? 0,
+        value: AppData()
+                .currentRecord
+                ?.getTotalPrice(AppData().currentRecordCategory) ??
+            0,
       ),
     );
   }

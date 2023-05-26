@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Common/Utils.dart';
 import 'SubItemModel.dart';
 
 part 'ItemModel.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: HiveTypeId.ItemModel)
 class ItemModel {
   @HiveField(1)
   SubItemModel data;

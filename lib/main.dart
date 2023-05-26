@@ -4,8 +4,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
-import 'package:ledger_book/Model/OrderModel.dart';
 import 'package:ledger_book/Model/SubItemModel.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -14,9 +14,9 @@ import 'View/HomePage/HomePage.dart';
 Future<void> initHive() async {
   await Hive.initFlutter();
 
-  Hive.registerAdapter(OrderModelAdapter());
-  Hive.registerAdapter(ItemModelAdapter());
   Hive.registerAdapter(SubItemModelAdapter());
+  Hive.registerAdapter(ItemModelAdapter());
+  RecordModel.registerHiveAdapter();
 }
 
 void main() async {
@@ -49,10 +49,8 @@ class _MyApp extends State<MyApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-          primarySwatch: Localization().themeColor,
-          appBarTheme: const AppBarTheme(
-            foregroundColor: Colors.white,
-          )),
+        primarySwatch: Localization().themeColor,
+      ),
       home: HomePage(callback: () => setState(() {})),
     );
   }

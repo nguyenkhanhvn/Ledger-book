@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ledger_book/Common/Define.dart';
-import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 import 'package:ledger_book/View/Common/CommonTile.dart';
-import 'package:ledger_book/View/OrderDetailPage/OrderDetail.dart';
+import 'package:ledger_book/View/RecordDetailPage/RecordDetail.dart';
 import 'package:ledger_book/View/PageRouting.dart';
 
-class OrderTile extends TileButton {
-  OrderTile(
+class RecordTile extends TileButton {
+  RecordTile(
     BuildContext context, {
     super.key,
     required int index,
@@ -18,16 +18,16 @@ class OrderTile extends TileButton {
     Map<PageAction, VoidCallback>? actionCallback,
   }) : super(
           child: ListTile(
-            title: TitleText(AppData().listOrder[index].dateTimeShortString),
-            subtitle: SubTitleText(AppData().listOrder[index].title),
+            title: TitleText(AppData().listRecord[index].getDateTimeShortString(RecordCategory.expense)),
+            subtitle: SubTitleText(AppData().listRecord[index].title),
             trailing: BasicText(
-                '${AppData().listOrder[index].totalPrice.toString()}${LocalizationString.Currency_Unit}'),
+                '${AppData().listRecord[index].getTotalPrice(RecordCategory.expense).toString()}${LocalizationString.Currency_Unit}'),
           ),
           onPressed: () async {
-            Controller().setCurrentOrder(index);
+            Controller().setCurrentRecord(index);
             await PageRouting.routeWithCallback(
               context,
-              builder: (context) => const OrderDetail(),
+              builder: (context) => const RecordDetail(),
               callback: callback,
               actionCallback: actionCallback,
             );

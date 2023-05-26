@@ -6,18 +6,18 @@ import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/View/Common/BasicPopupMenu.dart';
 import 'package:ledger_book/View/Common/MyFlutterIcons.dart';
 import 'package:ledger_book/View/Model/CheckboxModel.dart';
-import 'package:ledger_book/Model/OrderModel.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonListview.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 import 'package:ledger_book/View/Common/Footer.dart';
 import 'package:ledger_book/View/Common/SimpleDialog.dart';
-import 'package:ledger_book/View/HomePage/CheckboxOrderTile.dart';
+import 'package:ledger_book/View/HomePage/CheckboxRecordTile.dart';
 import 'package:ledger_book/View/HomePage/Drawer.dart';
-import 'package:ledger_book/View/HomePage/OrderEdit.dart';
+import 'package:ledger_book/View/HomePage/RecordEdit.dart';
 import 'package:ledger_book/View/Model/PopupMenuModel.dart';
 
-import 'OrderTile.dart';
+import 'RecordTile.dart';
 
 class HomePage extends StatefulWidget {
   final VoidCallback? callback;
@@ -30,13 +30,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool editMode = false;
-  final List<CheckboxModel<OrderModel>> listModel = [];
+  final List<CheckboxModel<RecordModel>> listModel = [];
 
   void _initListModel({List<int> checkedList = const []}) {
     listModel.clear();
-    for (int i = 0; i < AppData().listOrder.length; i++) {
-      listModel.add(CheckboxModel<OrderModel>(
-          model: AppData().listOrder[i], checked: checkedList.contains(i)));
+    for (int i = 0; i < AppData().listRecord.length; i++) {
+      listModel.add(CheckboxModel<RecordModel>(
+          model: AppData().listRecord[i], checked: checkedList.contains(i)));
     }
   }
 
@@ -69,6 +69,8 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         centerTitle: true,
+        leading:
+            editMode ? BackButton(onPressed: () => _switchMode(false)) : null,
         actions: editMode
             ? [
                 BaseIconButton(
@@ -77,14 +79,14 @@ class _HomePageState extends State<HomePage> {
                     context: context,
                     builder: (BuildContext context) {
                       return BasicDialog(
-                        title:
-                            TitleText(LocalizationString.Confirm_Delete_Orders),
+                        title: TitleText(
+                            LocalizationString.Confirm_Delete_Records),
                         successWidget: BasicText(LocalizationString.Confirm),
                         onSuccess: () async {
                           Navigator.pop(context);
-                          for (int i = 0; i < listModel.length; i++) {
+                          for (int i = listModel.length - 1; i >= 0; i--) {
                             if (listModel[i].checked) {
-                              await Controller().deleteOrder(i);
+                              await Controller().deleteRecord(i);
                             }
                           }
                           _switchMode(false);
@@ -111,13 +113,13 @@ class _HomePageState extends State<HomePage> {
                       context: context,
                       builder: (BuildContext context) {
                         return BasicDialog(
-                          title: TitleText(LocalizationString.Add_Order),
-                          content: OrderEdit(textController: textController),
+                          title: TitleText(LocalizationString.Add_Record),
+                          content: RecordEdit(textController: textController),
                           successWidget: BasicText(LocalizationString.Add),
                           onSuccess: () async {
                             Navigator.pop(context);
-                            await Controller().addOrder(
-                              OrderModel(title: textController.text),
+                            await Controller().addRecord(
+                              RecordModel(title: textController.text),
                             );
                             textController.clear();
                             _switchMode(false);
@@ -201,9 +203,11 @@ class _HomePageState extends State<HomePage> {
                       icon: MyFlutterIcons.sort_number_up,
                       handle: () async {
                         await Controller().sortProfile((a, b) {
-                          if (a.totalPrice < b.totalPrice) {
+                          if (a.getTotalPrice(RecordCategory.expense) <
+                              b.getTotalPrice(RecordCategory.expense)) {
                             return -1;
-                          } else if (a.totalPrice == b.totalPrice) {
+                          } else if (a.getTotalPrice(RecordCategory.expense) ==
+                              b.getTotalPrice(RecordCategory.expense)) {
                             return 0;
                           }
                           return 1;
@@ -216,9 +220,11 @@ class _HomePageState extends State<HomePage> {
                       icon: MyFlutterIcons.sort_number_down,
                       handle: () async {
                         await Controller().sortProfile((a, b) {
-                          if (a.totalPrice > b.totalPrice) {
+                          if (a.getTotalPrice(RecordCategory.expense) >
+                              b.getTotalPrice(RecordCategory.expense)) {
                             return -1;
-                          } else if (a.totalPrice == b.totalPrice) {
+                          } else if (a.getTotalPrice(RecordCategory.expense) ==
+                              b.getTotalPrice(RecordCategory.expense)) {
                             return 0;
                           }
                           return 1;
@@ -254,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                             builder: (BuildContext context) {
                               return BasicDialog(
                                 title:
-                                    TitleText(LocalizationString.Import_Order),
+                                    TitleText(LocalizationString.Import_Record),
                                 content: TextFormField(
                                   decoration: const InputDecoration(
                                       border: OutlineInputBorder()),
@@ -266,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                                 onSuccess: () async {
                                   Navigator.pop(context);
                                   Controller()
-                                      .importListOrderToCurrentProfile(
+                                      .importListRecordToCurrentProfile(
                                           textController.text)
                                       .then(
                                     (value) {
@@ -294,7 +300,7 @@ class _HomePageState extends State<HomePage> {
                       title: LocalizationString.Export_Raw,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(Utils.exportProfile(
-                              AppData().currentProfile, AppData().listOrder))
+                              AppData().currentProfile, AppData().listRecord))
                           .then(
                         (value) => Utils.showToast(context,
                             LocalizationString.Copy_To_Clipboard_Successfully),
@@ -349,20 +355,20 @@ class _HomePageState extends State<HomePage> {
                 ? BaseListView(
                     itemCount: listModel.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return CheckboxOrderTile(
+                      return CheckboxRecordTile(
                           model: listModel[index], setState: setState);
                     },
                   )
                 : BaseListView(
-                    itemCount: AppData().listOrder.length,
+                    itemCount: AppData().listRecord.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return OrderTile(
+                      return RecordTile(
                         context,
                         index: index,
                         callback: () => _switchMode(false),
                         actionCallback: {
                           PageAction.delete: () async =>
-                              await Controller().deleteCurrentOrder(),
+                              await Controller().deleteCurrentRecord(),
                         },
                         onLongPress: () =>
                             _switchMode(true, checkedList: [index]),
@@ -371,9 +377,6 @@ class _HomePageState extends State<HomePage> {
                   ),
           ),
         ],
-      ),
-      bottomNavigationBar: PriceFooter(
-        value: AppData().totalPrice,
       ),
     );
   }

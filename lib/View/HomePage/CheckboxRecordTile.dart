@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:ledger_book/Common/Utils.dart';
-import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/View/Model/CheckboxModel.dart';
-import 'package:ledger_book/Model/OrderModel.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 
-class CheckboxOrderTile extends Container {
-  CheckboxOrderTile(
+class CheckboxRecordTile extends Container {
+  CheckboxRecordTile(
       {super.key,
-      required CheckboxModel<OrderModel> model,
+      required CheckboxModel<RecordModel> model,
       required ValueChanged<VoidCallback> setState})
       : super(
           child: Container(
@@ -23,7 +21,7 @@ class CheckboxOrderTile extends Container {
               value: model.checked,
               selected: model.checked,
               title: TitleText(model.model.title),
-              subtitle: SubTitleText(model.model.dateTimeShortString),
+              subtitle: SubTitleText(model.model.getDateTimeShortString(RecordCategory.expense)),
               onChanged: (value) =>
                   setState(() => model.checked = value ?? false),
             ),

@@ -115,7 +115,7 @@ class _AppDrawer extends State<AppDrawer> {
                                         Navigator.pop(context);
                                         Navigator.pop(context);
                                         await Controller()
-                                            .addProfile(textController.text);
+                                            .addProfile(textController.text, open: true);
                                         widget.callback?.call();
                                       },
                                       onCancel: () => Navigator.pop(context),

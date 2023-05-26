@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
@@ -288,6 +289,46 @@ class _Settings extends State<Settings> {
                                     Icons.circle,
                                     color: Colors.primaries[index],
                                   ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  TileButton(
+                    height: 40,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: BasicText(LocalizationString.Export_Type)),
+                        BasicText(AppData().exportType.name),
+                      ],
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: ExportType.values.length,
+                              itemBuilder: (context, index) {
+                                return RadioListTile(
+                                  value: index,
+                                  groupValue: AppData().exportType.index,
+                                  onChanged: (index) async {
+                                    Navigator.pop(context);
+                                    if (index != null &&
+                                        index < ExportType.values.length) {
+                                      await Controller().changeExportType(
+                                          ExportType.values[index]);
+                                    }
+                                    setState(() => {});
+                                  },
+                                  title:
+                                      BasicText(ExportType.values[index].name),
                                 );
                               },
                             ),

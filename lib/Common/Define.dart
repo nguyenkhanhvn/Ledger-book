@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 
+class HiveTypeId {
+  static const int RecordModel = 1;
+  static const int RecordCategory = 2;
+  static const int RecordData = 3;
+  static const int ItemModel = 4;
+  static const int SubItemModel = 5;
+}
+
+enum ExportType {
+  None,
+}
+
 enum PageAction {
   none,
   add,
@@ -36,10 +48,11 @@ class AppDefine {
   static String get DefaultProfileName => 'default_profile';
   static String get CurrentProfileKey => 'currentProfile';
   static String get ListProfileKey => 'listProfile';
-  static String get ListOrderKey => 'order';
+  static String get ListRecordKey => 'listRecord';
   static String get CurrentThemeKey => 'currentTheme';
   static String get CurrentLocaleKey => 'CurrentLocaleKey';
   static String get CurrentColorKey => 'currentColor';
+  static String get CurrentExportTypeKey => 'currentExportType';
 
   // Color
   static MaterialColor get DefaultColor => Colors.brown;

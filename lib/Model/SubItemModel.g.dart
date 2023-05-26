@@ -8,7 +8,7 @@ part of 'SubItemModel.dart';
 
 class SubItemModelAdapter extends TypeAdapter<SubItemModel> {
   @override
-  final int typeId = 3;
+  final int typeId = 5;
 
   @override
   SubItemModel read(BinaryReader reader) {

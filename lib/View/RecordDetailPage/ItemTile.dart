@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ledger_book/Common/Define.dart';
-import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
+import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 import 'package:ledger_book/View/Common/CommonTile.dart';
 import 'package:ledger_book/View/ItemDetailPage/ItemDetail.dart';
@@ -13,28 +13,34 @@ class ItemTile extends TileButton {
     BuildContext context, {
     super.key,
     required int index,
+    required List<ItemModel> listModel,
     super.onLongPress,
-    VoidCallback? callback,
+    ValueChanged<List>? callback,
   }) : super(
           child: ListTile(
-            title: TitleText(AppData().currentOrder?.listItem[index].dateTimeString??'-'),
+            title: TitleText(listModel[index].dateTimeString ?? '-'),
             subtitle: SubTitleText(
-                AppData().currentOrder?.listItem[index].title ??
-                    LocalizationString.Error),
+                listModel[index].title ?? LocalizationString.Error),
             trailing: BasicText(
-                '${AppData().currentOrder?.listItem[index].totalPrice.toString() ?? LocalizationString.Error}${LocalizationString.Currency_Unit}'),
+                '${listModel[index].totalPrice.toString() ?? LocalizationString.Error}${LocalizationString.Currency_Unit}'),
           ),
           onPressed: () {
             Controller().setCurrentItem(index);
             final item = AppData().currentItem!;
-            PageRouting.routeWithConditionalCallback(
+            PageRouting.routeWithConditionalValueChangeCallback(
               context,
               builder: (context) => ItemDetail(model: item),
               callback: callback,
               actionCallback: {
-                PageAction.save: () async => await Controller().editItem(item),
-                PageAction.delete: () async =>
-                    await Controller().deleteCurrentItem(),
+                PageAction.save: (returnValue) async {
+                  if (returnValue.isNotEmpty) {
+                    await Controller()
+                        .editCurrentItem(item, toCategory: returnValue[0]);
+                  }
+                },
+                PageAction.delete: (returnValue) async {
+                  await Controller().deleteCurrentItem();
+                },
               },
             );
           },

@@ -1,8 +1,11 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:ledger_book/Common/Define.dart';
 import 'package:ledger_book/Common/Utils.dart';
+import 'package:ledger_book/Controller/Controller.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
+import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/Model/SubItemModel.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
@@ -23,6 +26,8 @@ class ItemDetail extends StatefulWidget {
 }
 
 class _ItemDetailState extends State<ItemDetail> {
+  RecordCategory modelCategory = AppData().currentRecordCategory;
+
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -64,7 +69,7 @@ class _ItemDetailState extends State<ItemDetail> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
-              Navigator.pop(context, PageAction.save);
+              Navigator.pop(context, [PageAction.save, modelCategory]);
             },
           ),
           IconButton(
@@ -77,7 +82,7 @@ class _ItemDetailState extends State<ItemDetail> {
                   successWidget: BasicText(LocalizationString.Confirm),
                   onSuccess: () async {
                     Navigator.pop(context);
-                    Navigator.pop(context, PageAction.delete);
+                    Navigator.pop(context, [PageAction.delete]);
                   },
                   onCancel: () => Navigator.pop(context),
                 );
@@ -87,11 +92,32 @@ class _ItemDetailState extends State<ItemDetail> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        padding: const EdgeInsets.only(left: 10, right: 10),
         child: Scrollbar(
           thickness: 5,
           child: ListView(
             children: [
+              Container(
+                margin: const EdgeInsets.only(top: 20, left: 50, right: 50),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.fromBorderSide(BasicBorderSide(width: 2)),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<RecordCategory>(
+                    value: modelCategory,
+                    items: RecordCategory.values
+                        .map((category) => DropdownMenuItem(
+                              value: category,
+                              child:
+                                  BasicText(Utils.recordCategoryString(category)),
+                            ))
+                        .toList(),
+                    onChanged: (value) => setState(
+                        () => modelCategory = value ?? RecordCategory.expense),
+                  ),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
                 child: SubItemFieldEdit(

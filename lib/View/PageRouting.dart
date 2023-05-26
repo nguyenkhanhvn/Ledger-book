@@ -51,4 +51,23 @@ class PageRouting {
     }
     return action;
   }
+
+  static Future<List<dynamic>?> routeWithConditionalValueChangeCallback(
+      BuildContext context, {
+        required WidgetBuilder builder,
+        ValueChanged<List>? callback,
+        Map<PageAction, ValueChanged<List>>? actionCallback,
+      }) async {
+    List<dynamic>? returnValue = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: builder,
+      ),
+    );
+    if (returnValue != null && returnValue.length >= 2) {
+    actionCallback?[returnValue[0]]?.call(returnValue.sublist(1));
+    callback?.call(returnValue.sublist(1));
+    }
+    return returnValue;
+  }
 }
