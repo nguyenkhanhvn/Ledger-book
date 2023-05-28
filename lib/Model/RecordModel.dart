@@ -86,10 +86,17 @@ class RecordModel {
     return endDate;
   }
 
+  String get dateTimeShortString =>
+      '${Utils.formatShortDateTime(startDate)} ${LocalizationString.To} ${Utils.formatShortDateTime(endDate)}';
+
+  String get dateTimeString =>
+      '${Utils.formatDateTime(startDate)} ${LocalizationString.To} ${Utils.formatDateTime(endDate)}';
+
   DateTime? getRecordStartDate(RecordCategory category) =>
       _records[category]?.startDate;
 
-  DateTime? getRecordEndDate(RecordCategory category) => _records[category]?.endDate;
+  DateTime? getRecordEndDate(RecordCategory category) =>
+      _records[category]?.endDate;
 
   List<ItemModel> getListItem(RecordCategory category) =>
       _records[category]?.listItem ?? [];
