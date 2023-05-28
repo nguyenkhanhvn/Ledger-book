@@ -8,6 +8,8 @@ import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/Model/RecordModel.dart';
 
+import 'ExportManager.dart';
+
 part 'AppData.dart';
 
 part 'Localization.dart';

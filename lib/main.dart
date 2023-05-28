@@ -20,6 +20,8 @@ Future<void> initHive() async {
 }
 
 void main() async {
+  List<int> l = [1,2];
+  print(l.sublist(2));
   WidgetsFlutterBinding.ensureInitialized();
 
   await GlobalConfigs()

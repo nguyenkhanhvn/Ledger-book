@@ -5,6 +5,8 @@ import 'package:ledger_book/Controller/Controller.dart';
 class BaseTabBar extends TabBar {
   BaseTabBar({super.key,super.controller,
     super.isScrollable = false,
+    BorderRadiusGeometry? borderRadius,
+
     super.padding,
     super.indicatorColor,
     super.automaticIndicatorColorAdjustment = true,
@@ -27,14 +29,14 @@ class BaseTabBar extends TabBar {
           unselectedLabelColor: Localization().themeColor,
           indicatorSize: TabBarIndicatorSize.label,
           indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: borderRadius,
               color: Localization().themeColor),
           tabs: List.generate(
             children.length,
             (index) => Tab(
               child: Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: borderRadius,
                     border:
                         Border.all(color: Localization().themeColor, width: 1)),
                 child: children[index],

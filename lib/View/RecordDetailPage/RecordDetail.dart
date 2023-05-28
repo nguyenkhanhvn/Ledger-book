@@ -10,13 +10,13 @@ import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
-import 'package:ledger_book/View/Common/Footer.dart';
 import 'package:ledger_book/View/Common/SimpleDialog.dart';
 import 'package:ledger_book/View/Common/MyFlutterIcons.dart';
 import 'package:ledger_book/View/ItemDetailPage/ItemDetail.dart';
 import 'package:ledger_book/View/Model/PopupMenuModel.dart';
 import 'package:ledger_book/View/RecordDetailPage/RecordDetailContent.dart';
 import 'package:ledger_book/View/PageRouting.dart';
+import 'package:ledger_book/View/RecordDetailPage/RecordSummary.dart';
 
 class RecordDetail extends StatefulWidget {
   const RecordDetail({super.key});
@@ -346,8 +346,9 @@ class _RecordDetailState extends State<RecordDetail>
                     PopupMenuModel(
                       title: LocalizationString.Export_Simplified,
                       icon: MyFlutterIcons.file_export,
-                      handle: () => Utils.copyToClipboard(
-                              Utils.exportRecordString(
+                      handle: () => Utils.copyToClipboard(AppData()
+                              .exportManager
+                              .exportRecordString(
                                   AppData().currentRecord ?? RecordModel()))
                           .then(
                         (value) => Utils.showToast(context,
@@ -359,8 +360,9 @@ class _RecordDetailState extends State<RecordDetail>
                     PopupMenuModel(
                       title: LocalizationString.Export_Details,
                       icon: MyFlutterIcons.file_export,
-                      handle: () => Utils.copyToClipboard(
-                              Utils.exportRecordString(
+                      handle: () => Utils.copyToClipboard(AppData()
+                              .exportManager
+                              .exportRecordString(
                                   AppData().currentRecord ?? RecordModel(),
                                   detail: true))
                           .then(
@@ -378,6 +380,7 @@ class _RecordDetailState extends State<RecordDetail>
         children: [
           BaseTabBar(
             controller: _tabController,
+            borderRadius: BorderRadius.circular(50),
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
             children: [
@@ -402,10 +405,7 @@ class _RecordDetailState extends State<RecordDetail>
                 RecordDetailContent(
                   editMode: editMode,
                   listCheckboxModel: checkboxModel[RecordCategory.income] ?? [],
-                  listModel: AppData()
-                          .currentRecord
-                          ?.getListItem(RecordCategory.income) ??
-                      [],
+                  modelCategory: RecordCategory.income,
                   setState: setState,
                   switchMode: _switchMode,
                 ),
@@ -413,24 +413,17 @@ class _RecordDetailState extends State<RecordDetail>
                   editMode: editMode,
                   listCheckboxModel:
                       checkboxModel[RecordCategory.expense] ?? [],
-                  listModel: AppData()
-                          .currentRecord
-                          ?.getListItem(RecordCategory.expense) ??
-                      [],
+                  modelCategory: RecordCategory.expense,
                   setState: setState,
                   switchMode: _switchMode,
                 ),
-                Center(child: Text(3.toString()))
+                RecordSummary(
+                  record: AppData().currentRecord ?? RecordModel(),
+                ),
               ],
             ),
-          )
+          ),
         ],
-      ),
-      bottomNavigationBar: PriceFooter(
-        value: AppData()
-                .currentRecord
-                ?.getTotalPrice(AppData().currentRecordCategory) ??
-            0,
       ),
     );
   }

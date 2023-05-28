@@ -209,7 +209,10 @@ class _ItemDetailState extends State<ItemDetail> {
         ),
       ),
       bottomNavigationBar: PriceFooter(
+        title: LocalizationString.Total,
         value: widget.model.totalPrice,
+        number: widget.model.listSubItem.length,
+        numberSuffix: LocalizationString.Sub_Item,
       ),
     );
   }

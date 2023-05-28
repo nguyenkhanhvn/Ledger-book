@@ -4,10 +4,11 @@ import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
 
 class PriceFooter extends Container {
-  final int value;
-
   PriceFooter({
-    required this.value,
+    required String title,
+    required int value,
+    required String numberSuffix,
+    required int number,
     super.key,
     super.alignment,
     super.padding = const EdgeInsets.all(10),
@@ -26,7 +27,14 @@ class PriceFooter extends Container {
               top: BasicBorderSide(width: 2.0),
             ),
           ),
-          child: BasicText(
-              '${LocalizationString.Total}:     $value${LocalizationString.Currency_Unit}'),
+          child: Row(
+            children: [
+              Expanded(
+                child: BasicText(
+                    '$title:     $value${LocalizationString.Currency_Unit}'),
+              ),
+              BasicText('$number $numberSuffix'),
+            ],
+          ),
         );
 }

@@ -29,6 +29,15 @@ class AppData {
 
   ExportType get exportType => _exportType;
 
+  ExportManager get exportManager {
+    switch (_exportType) {
+      case ExportType.Custom:
+        return ExportManagerCustom();
+      default:
+        return ExportManagerDefault();
+    }
+  }
+
   RecordModel? get currentRecord {
     if (_checkRecordIndexValid(_recordIndex)) {
       return RecordModel.clone(_listRecord[_recordIndex!]);

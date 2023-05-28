@@ -10,7 +10,6 @@ import 'package:ledger_book/Model/RecordModel.dart';
 import 'package:ledger_book/View/Common/CommonListview.dart';
 import 'package:ledger_book/View/Common/CommonMaterial.dart';
 import 'package:ledger_book/View/Common/CommonText.dart';
-import 'package:ledger_book/View/Common/Footer.dart';
 import 'package:ledger_book/View/Common/SimpleDialog.dart';
 import 'package:ledger_book/View/HomePage/CheckboxRecordTile.dart';
 import 'package:ledger_book/View/HomePage/Drawer.dart';

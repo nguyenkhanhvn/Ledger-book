@@ -64,7 +64,7 @@ class PageRouting {
         builder: builder,
       ),
     );
-    if (returnValue != null && returnValue.length >= 2) {
+    if (returnValue != null && returnValue.isNotEmpty) {
     actionCallback?[returnValue[0]]?.call(returnValue.sublist(1));
     callback?.call(returnValue.sublist(1));
     }

@@ -10,6 +10,7 @@ class HiveTypeId {
 
 enum ExportType {
   None,
+  Custom,
 }
 
 enum PageAction {
