@@ -91,7 +91,7 @@ class _AppDrawer extends State<AppDrawer> {
                               content: Row(
                                 children: [
                                   BasicText(
-                                      '${LocalizationString.Profile_Title}: '),
+                                      '${LocalizationString.Profile_Name}: '),
                                   Expanded(
                                     child: TextField(
                                       controller: textController,

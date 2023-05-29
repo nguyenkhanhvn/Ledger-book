@@ -50,7 +50,7 @@ class _Settings extends State<Settings> {
                   BasicTile(
                     padding: const EdgeInsets.only(top: 10, bottom: 5),
                     borderLine: BasicBorderSide(width: 2),
-                    child: TitleText(LocalizationString.Profile_Title),
+                    child: TitleText(LocalizationString.Profile_Name),
                   ),
                   ListView.builder(
                     padding: EdgeInsets.zero,
@@ -78,7 +78,7 @@ class _Settings extends State<Settings> {
                                 content: Row(
                                   children: [
                                     BasicText(
-                                        '${LocalizationString.Profile_Title}: '),
+                                        '${LocalizationString.Profile_Name}: '),
                                     Expanded(
                                       child: TextField(
                                         controller: textController,
@@ -97,7 +97,7 @@ class _Settings extends State<Settings> {
                                       builder: (BuildContext context) {
                                         return BasicDialog(
                                           title: TitleText(
-                                              '${LocalizationString.Confirm_Edit_Profile} ${AppData().listProfile[index]} ${LocalizationString.To} ${textController.text}'),
+                                              '${LocalizationString.Confirm_Edit_Profile} ${AppData().listProfile[index]} ${LocalizationString.To2} ${textController.text}'),
                                           successWidget: BasicText(
                                               LocalizationString.Confirm),
                                           onSuccess: () async {
@@ -138,7 +138,7 @@ class _Settings extends State<Settings> {
                       final textController = TextEditingController();
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) {
+                        builder: (BuildContext dialogContext) {
                           return BasicDialog(
                             title: TitleText(LocalizationString.Import_Profile),
                             content: TextFormField(
@@ -149,15 +149,21 @@ class _Settings extends State<Settings> {
                             ),
                             successWidget: BasicText(LocalizationString.Import),
                             onSuccess: () async {
-                              Navigator.pop(context);
+                              Navigator.pop(dialogContext);
                               Controller()
-                                  .importProfile(textController.text)
+                                  .importListProfile(textController.text,
+                                      open: true)
                                   .then(
-                                (value) {
+                                (success) {
                                   textController.clear();
-                                  setState(() {});
-                                  Utils.showToast(context,
-                                      LocalizationString.Import_Successfully);
+                                  if (success) {
+                                    setState(() {});
+                                    Utils.showToast(context,
+                                        LocalizationString.Import_Successfully);
+                                  } else {
+                                    Utils.showToast(context,
+                                        LocalizationString.Import_Error);
+                                  }
                                 },
                                 onError: (e) {
                                   textController.clear();
@@ -171,6 +177,36 @@ class _Settings extends State<Settings> {
                           );
                         },
                       );
+                    },
+                  ),
+                  TileButton(
+                    height: 40,
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: BasicText(LocalizationString.Export_Profile)),
+                    onPressed: () => Utils.copyToClipboard(Utils.exportListProfile(
+                            [AppData().currentProfile], [AppData().listRecord]))
+                        .then(
+                      (value) => Utils.showToast(context,
+                          LocalizationString.Copy_To_Clipboard_Successfully),
+                      onError: (e) => Utils.showToast(context,
+                          '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                    ),
+                  ),
+                  TileButton(
+                    height: 40,
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: BasicText(LocalizationString.Export_All_Profile)),
+                    onPressed: () {
+                      Controller().exportAllProfile().then(
+                            (value) => Utils.showToast(
+                                context,
+                                LocalizationString
+                                    .Copy_To_Clipboard_Successfully),
+                            onError: (e) => Utils.showToast(context,
+                                '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                          );
                     },
                   ),
                   BasicTile(

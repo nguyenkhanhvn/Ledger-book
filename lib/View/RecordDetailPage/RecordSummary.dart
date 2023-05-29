@@ -18,13 +18,11 @@ class RecordSummary extends DefaultTabController {
                   padding: const EdgeInsets.only(bottom: 20),
                   child: BaseTabBar(
                     children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: BasicText(LocalizationString.Export_Simplified),
+                      Center(
+                        child: BasicText(LocalizationString.Brief),
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: BasicText(LocalizationString.Export_Details),
+                      Center(
+                        child: BasicText(LocalizationString.Detail),
                       ),
                     ],
                   ),

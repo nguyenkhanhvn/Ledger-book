@@ -76,7 +76,7 @@ class _RecordDetailState extends State<RecordDetail>
       }
     });
 
-    _tabController.index = 0;
+    _tabController.index = 1;
   }
 
   @override
@@ -344,7 +344,7 @@ class _RecordDetailState extends State<RecordDetail>
                       ),
                     ),
                     PopupMenuModel(
-                      title: LocalizationString.Export_Simplified,
+                      title: LocalizationString.Export_Brief,
                       icon: MyFlutterIcons.file_export,
                       handle: () => Utils.copyToClipboard(AppData()
                               .exportManager
@@ -384,16 +384,13 @@ class _RecordDetailState extends State<RecordDetail>
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
             children: [
-              Align(
-                alignment: Alignment.center,
+              Center(
                 child: BasicText(LocalizationString.Income),
               ),
-              Align(
-                alignment: Alignment.center,
+              Center(
                 child: BasicText(LocalizationString.Expense),
               ),
-              Align(
-                alignment: Alignment.center,
+              Center(
                 child: BasicText(LocalizationString.Summary),
               ),
             ],

@@ -14,13 +14,13 @@ class LocalizationString {
   static String get Language => Localization().listString['Language']??'Language';
   static String get Theme => Localization().listString['Theme']??'Theme';
   static String get Error_Theme => Localization().listString['Error_Theme']??'Error_Theme';
+  static String get Error => Localization().listString['Error']??'Error';
   static String get Color => Localization().listString['Color']??'Color';
   static String get Export_Type => Localization().listString['Export_Type']??'Export_Type';
-  static String get Profile_Title => Localization().listString['Profile_Name']??'Profile_Name';
+  static String get Profile_Name => Localization().listString['Profile_Name']??'Profile_Name';
   static String get Error_Profile_Name => Localization().listString['Error_Profile_Name']??'Error_Profile_Name';
   static String get Add_Profile => Localization().listString['Add_Profile']??'Add_Profile';
   static String get Edit_Profile => Localization().listString['Edit_Profile']??'Edit_Profile';
-  static String get Error => Localization().listString['Error']??'Error';
   static String get Exit => Localization().listString['Exit']??'Exit';
   static String get Settings => Localization().listString['Settings']??'Settings';
   static String get Total => Localization().listString['Total']??'Total';
@@ -59,6 +59,7 @@ class LocalizationString {
   static String get Title => Localization().listString['Title']??'Title';
   static String get Record_Title => Localization().listString['Record_Title']??'Record_Title';
   static String get To => Localization().listString['To']??'To';
+  static String get To2 => Localization().listString['To2']??'To2';
   static String get Sort_By_Date_Ascending => Localization().listString['Sort_By_Date_Ascending']??'Sort_By_Date_Ascending';
   static String get Sort_By_Date_Descending => Localization().listString['Sort_By_Date_Descending']??'Sort_By_Date_Descending';
   static String get Sort_By_Price_Ascending => Localization().listString['Sort_By_Price_Ascending']??'Sort_By_Price_Ascending';
@@ -70,14 +71,20 @@ class LocalizationString {
   static String get Import => Localization().listString['Import']??'Import';
   static String get Import_Profile => Localization().listString['Import_Profile']??'Import_Profile';
   static String get Export_Profile => Localization().listString['Export_Profile']??'Export_Profile';
+  static String get Export_All_Profile => Localization().listString['Export_All_Profile']??'Export_All_Profile';
   static String get Export_Raw => Localization().listString['Export_Raw']??'Export_Raw';
-  static String get Export_Simplified => Localization().listString['Export_Simplified']??'Export_Simplified';
+  static String get Export_Brief => Localization().listString['Export_Brief']??'Export_Brief';
   static String get Export_Details => Localization().listString['Export_Details']??'Export_Details';
   static String get Copy_To_Clipboard_Successfully => Localization().listString['Copy_To_Clipboard_Successfully']??'Copy_To_Clipboard_Successfully';
   static String get Copy_To_Clipboard_Error => Localization().listString['Copy_To_Clipboard_Error']??'Copy_To_Clipboard_Error';
   static String get Import_Successfully => Localization().listString['Import_Successfully']??'Import_Successfully';
   static String get Import_Error => Localization().listString['Import_Error']??'Import_Error';
   static String get Income => Localization().listString['Income']??'Income';
+  static String get Total_Income => Localization().listString['Total_Income']??'Total_Income';
   static String get Expense => Localization().listString['Expense']??'Expense';
+  static String get Total_Expense => Localization().listString['Total_Expense']??'Total_Expense';
   static String get Summary => Localization().listString['Summary']??'Summary';
+  static String get Brief => Localization().listString['Brief']??'Brief';
+  static String get Detail => Localization().listString['Detail']??'Detail';
+
 }

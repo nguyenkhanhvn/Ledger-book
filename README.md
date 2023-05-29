@@ -25,7 +25,7 @@ Generate localization
 ```sh
 flutter gen-l10n
 ```
-Regenerate Hive Addapter
+Regenerate Hive Adapter
 ```sh
 flutter pub run build_runner build --delete-conflicting-outputs
 ```

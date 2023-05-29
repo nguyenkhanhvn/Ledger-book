@@ -307,34 +307,34 @@ class _HomePageState extends State<HomePage> {
                             '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
                       ),
                     ),
-                    // PopupMenuModel(
-                    //   title: LocalizationString.Export_Simplified,
-                    //   icon: MyFlutterIcons.file_export,
-                    //   handle: () => Utils.copyToClipboard(
-                    //           Utils.exportProfileCustomString(
-                    //               AppData().currentProfile,
-                    //               AppData().listOrder))
-                    //       .then(
-                    //     (value) => Utils.showToast(context,
-                    //         LocalizationString.Copy_To_Clipboard_Successfully),
-                    //     onError: (e) => Utils.showToast(context,
-                    //         '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
-                    //   ),
-                    // ),
-                    // PopupMenuModel(
-                    //   title: LocalizationString.Export_Details,
-                    //   icon: MyFlutterIcons.file_export,
-                    //   handle: () => Utils.copyToClipboard(
-                    //           Utils.exportProfileCustomString(
-                    //               AppData().currentProfile, AppData().listOrder,
-                    //               detail: true))
-                    //       .then(
-                    //     (value) => Utils.showToast(context,
-                    //         LocalizationString.Copy_To_Clipboard_Successfully),
-                    //     onError: (e) => Utils.showToast(context,
-                    //         '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
-                    //   ),
-                    // ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Brief,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                              AppData().exportManager.exportProfileString(
+                                  AppData().currentProfile,
+                                  AppData().listRecord))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
+                    PopupMenuModel(
+                      title: LocalizationString.Export_Details,
+                      icon: MyFlutterIcons.file_export,
+                      handle: () => Utils.copyToClipboard(
+                          AppData().exportManager.exportProfileString(
+                                  AppData().currentProfile, AppData().listRecord,
+                                  detail: true))
+                          .then(
+                        (value) => Utils.showToast(context,
+                            LocalizationString.Copy_To_Clipboard_Successfully),
+                        onError: (e) => Utils.showToast(context,
+                            '${LocalizationString.Copy_To_Clipboard_Error}: $e'),
+                      ),
+                    ),
                   ],
                 ),
               ],

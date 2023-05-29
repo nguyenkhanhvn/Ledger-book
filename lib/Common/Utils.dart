@@ -61,4 +61,17 @@ class Utils {
     }
     return json.encode({'profile': profile, 'listRecord': jsonListRecord});
   }
+
+  static String exportListProfile(List<String> listProfile, List<List<RecordModel>> listRecord) {
+    if(listProfile.length != listRecord.length) return '';
+    List<Map<String, dynamic>> jsonData = [];
+    for(int i = 0; i<listProfile.length; i++) {
+      List<Map<String, dynamic>> jsonListRecord = [];
+      for (var record in listRecord[i]) {
+        jsonListRecord.add(record.toJson());
+      }
+      jsonData.add({'profile': listProfile[i], 'listRecord': jsonListRecord});
+    }
+    return json.encode(jsonData);
+  }
 }

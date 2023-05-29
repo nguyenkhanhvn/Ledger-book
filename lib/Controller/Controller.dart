@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:global_configs/global_configs.dart';
 import 'package:hive/hive.dart';
 import 'package:ledger_book/Common/Define.dart';
+import 'package:ledger_book/Common/Utils.dart';
 import 'package:ledger_book/Localization/LocalizationString.dart';
 import 'package:ledger_book/Model/ItemModel.dart';
 import 'package:ledger_book/Model/RecordModel.dart';
@@ -51,7 +52,7 @@ class Controller {
 
     // Open Profile
     String? profile = await _appDataBox.get(AppDefine.CurrentProfileKey);
-    AppData()._listProfile = _getListProfile();
+    AppData()._listProfile = _getListProfile(_appDataBox);
     await openProfile(profile);
 
     isInitialize = true;
@@ -107,7 +108,7 @@ class Controller {
     _box = await Hive.openBox(profile);
 
     AppData()._currentProfile = profile;
-    AppData()._listRecord = _getListRecord();
+    AppData()._listRecord = _getListRecord(_box);
     AppData()._itemIndex = null;
     AppData()._recordIndex = null;
 
@@ -116,10 +117,26 @@ class Controller {
     await changeThemeColor(colorIndex);
   }
 
-  Future<bool> importProfile(String profileString) async {
-    Map<String, dynamic> jsonData = json.decode(profileString);
-    bool success = await addProfile(jsonData['profile']);
-    if (success) {
+  Future<List<RecordModel>> getProfileRecords(String profile) async {
+      if(AppData()._listProfile.contains(profile)) {
+        if (profile == AppData()._currentProfile) {
+          return AppData().listRecord;
+        }
+        else {
+          Box profileBox = await Hive.openBox(profile);
+          List<RecordModel> result = _getListRecord(profileBox);
+          profileBox.close();
+          return result;
+        }
+      } else {
+        return [];
+      }
+  }
+
+  Future<bool> importProfile(String profile, {bool open = false}) async {
+    Map<String, dynamic> jsonData = json.decode(profile);
+    bool success = false;
+    if (!AppData()._listProfile.contains(jsonData['profile'])) {
       List<RecordModel> newListRecord = [];
       for (var recordData in jsonData['listRecord']) {
         var record = RecordModel.fromJson((recordData));
@@ -128,14 +145,46 @@ class Controller {
       Box newProfile = await Hive.openBox(jsonData['profile']);
       await newProfile.put(AppDefine.ListRecordKey, newListRecord);
       await newProfile.close();
+
+      success = await addProfile(jsonData['profile'], open: open);
     }
     return success;
   }
 
+  Future<bool> importListProfile(String listProfile, {bool open = false}) async {
+    List<dynamic> jsonListProfile = json.decode(listProfile);
+    bool success = false;
+    for(Map<String, dynamic> jsonProfile in jsonListProfile) {
+      if (!AppData()._listProfile.contains(jsonProfile['profile'])) {
+        List<RecordModel> newListRecord = [];
+        for (var recordData in jsonProfile['listRecord']) {
+          var record = RecordModel.fromJson((recordData));
+          newListRecord.add(record);
+        }
+        Box newProfile = await Hive.openBox(jsonProfile['profile']);
+        await newProfile.put(AppDefine.ListRecordKey, newListRecord);
+        await newProfile.close();
+
+        success = await addProfile(jsonProfile['profile'], open: open);
+      }
+    }
+    return success;
+  }
+
+  Future<void> exportAllProfile() async {
+    List<List<RecordModel>> allProfile = [];
+    for(String profile in AppData()._listProfile) {
+      List<RecordModel> profileRecords = await getProfileRecords(profile);
+      allProfile.add(profileRecords);
+    }
+    await Utils.copyToClipboard(Utils.exportListProfile(AppData()._listProfile, allProfile));
+  }
+
   Future<bool> addProfile(String profile, {bool open = false}) async {
-    bool result = AppData()._addProfile(profile);
-    if (result) {
+    bool result = false;
+    if (!AppData()._listProfile.contains(profile)) {
       await _appDataBox.put(AppDefine.ListProfileKey, AppData()._listProfile);
+      result = AppData()._addProfile(profile);
       if (open) await openProfile(profile);
     }
     return result;
@@ -348,15 +397,15 @@ class Controller {
     await _box!.put(AppDefine.ListRecordKey, AppData()._listRecord);
     return true;
   }
+}
 
-  List<RecordModel> _getListRecord() {
-    if (_box == null) return [];
+  List<RecordModel> _getListRecord(Box? box) {
+    if (box == null) return [];
     return List<RecordModel>.of(
-        (_box!.get(AppDefine.ListRecordKey) ?? []).cast<RecordModel>());
+        (box!.get(AppDefine.ListRecordKey) ?? []).cast<RecordModel>());
   }
 
-  List<String> _getListProfile() {
-    return List<String>.of(_appDataBox.get(AppDefine.ListProfileKey) ?? [])
+  List<String> _getListProfile(Box box) {
+    return List<String>.of(box.get(AppDefine.ListProfileKey) ?? [])
         .cast<String>();
   }
-}

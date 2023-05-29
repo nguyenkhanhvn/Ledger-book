@@ -6,40 +6,50 @@ import 'package:ledger_book/Model/SubItemModel.dart';
 import '../Common/Define.dart';
 
 abstract class ExportManager {
-  String exportProfileString(String profile, List<RecordModel> listRecord,
-      {String initParser = '',
-      int level = 0,
-      showList = true,
-      bool detail = false});
+  String exportProfileString(
+    final String profile,
+    final List<RecordModel> listRecord, {
+    String initParser = '',
+    int level = 0,
+    final showList = true,
+    final bool detail = false,
+  });
 
-  String exportRecordString(RecordModel record,
-      {String initParser = '',
-      int level = 0,
-      bool showList = true,
-      bool detail = false});
+  String exportRecordString(
+    final RecordModel record, {
+    String initParser = '',
+    int level = 0,
+    final bool showList = true,
+    final bool detail = false,
+  });
 
-  String exportItemString(ItemModel item,
-      {String initParser = '',
-      int level = 0,
-      bool showList = true,
-      bool detail = false});
+  String exportItemString(
+    final ItemModel item, {
+    String initParser = '',
+    int level = 0,
+    final bool showList = true,
+    final bool detail = false,
+  });
 
-  String exportSubItemString(SubItemModel subItem,
-      {String initParser = '',
-      int level = 0,
-      bool showList = true,
-      bool detail = false});
+  String exportSubItemString(
+    final SubItemModel subItem, {
+    String initParser = '',
+    int level = 0,
+    final bool showList = true,
+    final bool detail = false,
+  });
 }
 
 class ExportManagerDefault implements ExportManager {
   @override
-  String exportProfileString(String profile, List<RecordModel> listRecord,
+  String exportProfileString(
+      final String profile, final List<RecordModel> listRecord,
       {String initParser = '',
       int level = 0,
-      showList = true,
+      final showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Title}: $profile\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Name}: $profile\n';
     if (showList) {
       level++;
       for (var element in listRecord) {
@@ -53,15 +63,18 @@ class ExportManagerDefault implements ExportManager {
       }
       level--;
     }
+    detail = true;
     return initParser;
   }
 
   @override
-  String exportRecordString(RecordModel record,
-      {String initParser = '',
-      int level = 0,
-      bool showList = true,
-      bool detail = false}) {
+  String exportRecordString(
+    final RecordModel record, {
+    String initParser = '',
+    int level = 0,
+    final bool showList = true,
+    final bool detail = false,
+  }) {
     initParser =
         '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Date_Time}: ${detail ? record.dateTimeString : record.dateTimeShortString}\n';
     if (record.title.isNotEmpty) {
@@ -70,49 +83,47 @@ class ExportManagerDefault implements ExportManager {
     }
 
     for (RecordCategory category in RecordCategory.values) {
-      if (record.getListItem(category).isNotEmpty) {
-        String categoryTitle;
-        String categoryTotal;
-        switch (category) {
-          case RecordCategory.income:
-            categoryTitle = LocalizationString.Income;
-            categoryTotal =
-                '${LocalizationString.Total} ${LocalizationString.Income}';
-            break;
-          case RecordCategory.expense:
-            categoryTitle = LocalizationString.Expense;
-            categoryTotal =
-                '${LocalizationString.Total} ${LocalizationString.Expense}';
-            break;
-          default:
-            categoryTitle = LocalizationString.Title;
-            categoryTotal = LocalizationString.Total;
-            break;
-        }
-        initParser =
-            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTitle:\n';
+      String categoryTitle;
+      String categoryTotal;
+      switch (category) {
+        case RecordCategory.income:
+          categoryTitle = LocalizationString.Income;
+          categoryTotal = LocalizationString.Total_Income;
+          break;
+        case RecordCategory.expense:
+          categoryTitle = LocalizationString.Expense;
+          categoryTotal = LocalizationString.Total_Expense;
+          break;
+        default:
+          categoryTitle = LocalizationString.Title;
+          categoryTotal = LocalizationString.Total;
+          break;
+      }
+      initParser =
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTitle:\n';
 
-        level++;
-        if (showList) {
-          initParser =
-              '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
-          level++;
-          for (var element in record.getListItem(category)) {
-            initParser = exportItemString(element,
-                initParser: initParser,
-                level: level,
-                showList: detail ? showList : false,
-                detail: detail);
-            initParser =
-                '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${AppDefine.SeparatorLineCharacter * (AppDefine.SeparatorLineLength + AppDefine.TabLength * 4)}\n';
-          }
-          level--;
-        }
+      level++;
+      if (showList) {
         initParser =
-            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTotal: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
+            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
+        level++;
+        for (var element in record.getListItem(category)) {
+          initParser = exportItemString(element,
+              initParser: initParser,
+              level: level,
+              showList: detail ? showList : false,
+              detail: detail);
+          initParser =
+              '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${AppDefine.SeparatorLineCharacter * (AppDefine.SeparatorLineLength + AppDefine.TabLength * 4)}\n';
+        }
         level--;
       }
+      initParser =
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTotal: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
+      level--;
     }
+    initParser =
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Income} - ${LocalizationString.Expense} = ${record.getTotalPrice(RecordCategory.income) - record.getTotalPrice(RecordCategory.expense)}${LocalizationString.Currency_Unit}\n';
     return initParser;
   }
 
@@ -132,8 +143,8 @@ class ExportManagerDefault implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${item.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (item.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (item.price == 0 || item.listSubItem.isNotEmpty) {
+      if (item.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -168,8 +179,8 @@ class ExportManagerDefault implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${subItem.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (subItem.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (subItem.price == 0 || subItem.listSubItem.isNotEmpty) {
+      if (subItem.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -199,7 +210,7 @@ class ExportManagerCustom implements ExportManager {
       showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Title}: $profile\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Name}: $profile\n';
     if (showList) {
       level++;
       for (var element in listRecord) {
@@ -230,49 +241,47 @@ class ExportManagerCustom implements ExportManager {
     }
 
     for (RecordCategory category in RecordCategory.values) {
-      if (record.getListItem(category).isNotEmpty) {
-        String categoryTitle;
-        String categoryTotal;
-        switch (category) {
-          case RecordCategory.income:
-            categoryTitle = LocalizationString.Income;
-            categoryTotal =
-                '${LocalizationString.Total} ${LocalizationString.Income}';
-            break;
-          case RecordCategory.expense:
-            categoryTitle = LocalizationString.Expense;
-            categoryTotal =
-                '${LocalizationString.Total} ${LocalizationString.Expense}';
-            break;
-          default:
-            categoryTitle = LocalizationString.Title;
-            categoryTotal = LocalizationString.Total;
-            break;
-        }
-        initParser =
-            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTitle:\n';
+      String categoryTitle;
+      String categoryTotal;
+      switch (category) {
+        case RecordCategory.income:
+          categoryTitle = LocalizationString.Income;
+          categoryTotal = LocalizationString.Total_Income;
+          break;
+        case RecordCategory.expense:
+          categoryTitle = LocalizationString.Expense;
+          categoryTotal = LocalizationString.Total_Expense;
+          break;
+        default:
+          categoryTitle = LocalizationString.Title;
+          categoryTotal = LocalizationString.Total;
+          break;
+      }
+      initParser =
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTitle:\n';
 
-        level++;
-        if (showList) {
-          initParser =
-              '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
-          level++;
-          for (var element in record.getListItem(category)) {
-            initParser = exportItemString(element,
-                initParser: initParser,
-                level: level,
-                showList: detail ? showList : false,
-                detail: detail);
-            initParser =
-                '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${AppDefine.SeparatorLineCharacter * (AppDefine.SeparatorLineLength + AppDefine.TabLength * 4)}\n';
-          }
-          level--;
-        }
+      level++;
+      if (showList) {
         initParser =
-            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTotal: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
+            '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
+        level++;
+        for (var element in record.getListItem(category)) {
+          initParser = exportItemString(element,
+              initParser: initParser,
+              level: level,
+              showList: detail ? showList : false,
+              detail: detail);
+          initParser =
+              '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${AppDefine.SeparatorLineCharacter * (AppDefine.SeparatorLineLength + AppDefine.TabLength * 4)}\n';
+        }
         level--;
       }
+      initParser =
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}$categoryTotal: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
+      level--;
     }
+    initParser =
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Income} - ${LocalizationString.Expense} = ${record.getTotalPrice(RecordCategory.income) - record.getTotalPrice(RecordCategory.expense)}${LocalizationString.Currency_Unit}\n';
     return initParser;
   }
 
@@ -296,8 +305,8 @@ class ExportManagerCustom implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${item.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (item.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (item.price == 0 || item.listSubItem.isNotEmpty) {
+      if (item.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -339,8 +348,8 @@ class ExportManagerCustom implements ExportManager {
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${subItem.price}${LocalizationString.Currency_Unit}\n';
       }
     }
-    if (subItem.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (subItem.price == 0 || subItem.listSubItem.isNotEmpty) {
+      if (subItem.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -362,7 +371,11 @@ class ExportManagerCustom implements ExportManager {
   }
 }
 
-class ExportManagerOnlyExpenseDefault implements ExportManager {
+class ExportManagerOneCategoryDefault implements ExportManager {
+  RecordCategory category;
+
+  ExportManagerOneCategoryDefault({required this.category});
+
   @override
   String exportProfileString(String profile, List<RecordModel> listRecord,
       {String initParser = '',
@@ -370,7 +383,7 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
       showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Title}: $profile\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Name}: $profile\n';
     if (showList) {
       level++;
       for (var element in listRecord) {
@@ -394,17 +407,17 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
       bool showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Date_Time}: ${detail ? record.getDateTimeString(RecordCategory.expense) : record.getDateTimeShortString(RecordCategory.expense)}\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Date_Time}: ${detail ? record.getDateTimeString(category) : record.getDateTimeShortString(category)}\n';
     if (record.title.isNotEmpty) {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Record_Title}: ${record.title}\n';
     }
-    if (record.getListItem(RecordCategory.expense).isNotEmpty) {
+    if (record.getListItem(category).isNotEmpty) {
       if (showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
         level++;
-        for (var element in record.getListItem(RecordCategory.expense)) {
+        for (var element in record.getListItem(category)) {
           initParser = exportItemString(element,
               initParser: initParser,
               level: level,
@@ -416,7 +429,7 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
         level--;
       }
       initParser =
-          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Total}: ${record.getTotalPrice(RecordCategory.expense)}${LocalizationString.Currency_Unit}\n';
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Total}: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
     }
     return initParser;
   }
@@ -437,8 +450,8 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${item.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (item.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (item.price == 0 || item.listSubItem.isNotEmpty) {
+      if (item.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -473,8 +486,8 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${subItem.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (subItem.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (subItem.price == 0 || subItem.listSubItem.isNotEmpty) {
+      if (subItem.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -496,7 +509,11 @@ class ExportManagerOnlyExpenseDefault implements ExportManager {
   }
 }
 
-class ExportManagerOnlyExpenseCustom implements ExportManager {
+class ExportManagerOneCategoryCustom implements ExportManager {
+  RecordCategory category;
+
+  ExportManagerOneCategoryCustom({required this.category});
+
   @override
   String exportProfileString(String profile, List<RecordModel> listRecord,
       {String initParser = '',
@@ -504,7 +521,7 @@ class ExportManagerOnlyExpenseCustom implements ExportManager {
       showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Title}: $profile\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Profile_Name}: $profile\n';
     if (showList) {
       level++;
       for (var element in listRecord) {
@@ -528,17 +545,17 @@ class ExportManagerOnlyExpenseCustom implements ExportManager {
       bool showList = true,
       bool detail = false}) {
     initParser =
-        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Date_Time}: ${detail ? record.getDateTimeString(RecordCategory.expense) : record.getDateTimeShortString(RecordCategory.expense)}\n';
+        '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Date_Time}: ${detail ? record.getDateTimeString(category) : record.getDateTimeShortString(category)}\n';
     if (record.title.isNotEmpty) {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Record_Title}: ${record.title}\n';
     }
-    if (record.getListItem(RecordCategory.expense).isNotEmpty) {
+    if (record.getListItem(category).isNotEmpty) {
       if (showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Item}:\n';
         level++;
-        for (var element in record.getListItem(RecordCategory.expense)) {
+        for (var element in record.getListItem(category)) {
           initParser = exportItemString(element,
               initParser: initParser,
               level: level,
@@ -550,7 +567,7 @@ class ExportManagerOnlyExpenseCustom implements ExportManager {
         level--;
       }
       initParser =
-          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Total}: ${record.getTotalPrice(RecordCategory.expense)}${LocalizationString.Currency_Unit}\n';
+          '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Total}: ${record.getTotalPrice(category)}${LocalizationString.Currency_Unit}\n';
     }
     return initParser;
   }
@@ -575,8 +592,8 @@ class ExportManagerOnlyExpenseCustom implements ExportManager {
       initParser =
           '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${item.price}${LocalizationString.Currency_Unit}\n';
     }
-    if (item.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (item.price == 0 || item.listSubItem.isNotEmpty) {
+      if (item.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;
@@ -618,8 +635,8 @@ class ExportManagerOnlyExpenseCustom implements ExportManager {
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.Price}: ${subItem.price}${LocalizationString.Currency_Unit}\n';
       }
     }
-    if (subItem.listSubItem.isNotEmpty) {
-      if (showList) {
+    if (subItem.price == 0 || subItem.listSubItem.isNotEmpty) {
+      if (subItem.listSubItem.isNotEmpty && showList) {
         initParser =
             '$initParser${AppDefine.TabCharacter * AppDefine.TabLength * level}${LocalizationString.List_Sub_Item}:\n';
         level++;

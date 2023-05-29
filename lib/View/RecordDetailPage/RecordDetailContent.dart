@@ -62,9 +62,9 @@ class RecordDetailContent extends Column {
 String _getTotalTitle(RecordCategory category) {
   switch (category) {
     case RecordCategory.income:
-      return '${LocalizationString.Total} ${LocalizationString.Income}';
+      return LocalizationString.Total_Income;
     case RecordCategory.expense:
-      return '${LocalizationString.Total} ${LocalizationString.Expense}';
+      return LocalizationString.Total_Expense;
     default:
       return LocalizationString.Total;
   }
