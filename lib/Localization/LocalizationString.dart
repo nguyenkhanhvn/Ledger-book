@@ -80,8 +80,10 @@ class LocalizationString {
   static String get Import_Successfully => Localization().listString['Import_Successfully']??'Import_Successfully';
   static String get Import_Error => Localization().listString['Import_Error']??'Import_Error';
   static String get Income => Localization().listString['Income']??'Income';
+  static String get Income_Part => Localization().listString['Income_Part']??'Income_Part';
   static String get Total_Income => Localization().listString['Total_Income']??'Total_Income';
   static String get Expense => Localization().listString['Expense']??'Expense';
+  static String get Expense_Part => Localization().listString['Expense_Part']??'Expense_Part';
   static String get Total_Expense => Localization().listString['Total_Expense']??'Total_Expense';
   static String get Summary => Localization().listString['Summary']??'Summary';
   static String get Brief => Localization().listString['Brief']??'Brief';
